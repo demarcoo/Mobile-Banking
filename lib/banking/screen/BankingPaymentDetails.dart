@@ -1,5 +1,5 @@
 import 'package:bankingapp/banking/model/BankingModel.dart';
-import 'package:bankingapp/banking/screen/PurchaseMoreScreen.dart';
+import 'package:bankingapp/banking/screen/BankingTransfer.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/banking/utils/BankingDataGenerator.dart';
@@ -40,13 +40,16 @@ class _BankingPaymentDetailsState extends State<BankingPaymentDetails> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Icon(Icons.chevron_left, size: 25, color: Banking_blackColor).onTap(
+                  Icon(Icons.chevron_left, size: 25, color: Banking_blackColor)
+                      .onTap(
                     () {
                       finish(context);
                     },
                   ),
                   20.height,
-                  Text(widget.headerText!, style: boldTextStyle(size: 30, color: Banking_TextColorPrimary)),
+                  Text(widget.headerText!,
+                      style: boldTextStyle(
+                          size: 30, color: Banking_TextColorPrimary)),
                 ],
               ),
               ListView.builder(
@@ -57,24 +60,35 @@ class _BankingPaymentDetailsState extends State<BankingPaymentDetails> {
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       margin: EdgeInsets.only(top: 8, bottom: 8),
-                      decoration: boxDecorationWithShadow(borderRadius: BorderRadius.circular(10), backgroundColor: Banking_whitePureColor),
+                      decoration: boxDecorationWithShadow(
+                          borderRadius: BorderRadius.circular(10),
+                          backgroundColor: Banking_whitePureColor),
                       child: Row(
                         children: <Widget>[
                           Container(
                             height: 60,
                             width: 60,
                             padding: EdgeInsets.all(16),
-                            decoration: boxDecorationWithRoundedCorners(borderRadius: BorderRadius.circular(30), backgroundColor: Banking_Primary),
-                            child: Image.asset(mList[index].img!, height: 20, width: 20, color: Banking_whitePureColor),
+                            decoration: boxDecorationWithRoundedCorners(
+                                borderRadius: BorderRadius.circular(30),
+                                backgroundColor: Banking_Primary),
+                            child: Image.asset(mList[index].img!,
+                                height: 20,
+                                width: 20,
+                                color: Banking_whitePureColor),
                           ).paddingAll(spacing_standard),
-                          Text(mList[index].title!, style: primaryTextStyle(color: Banking_TextColorPrimary, size: 18, fontFamily: fontRegular)),
+                          Text(mList[index].title!,
+                              style: primaryTextStyle(
+                                  color: Banking_TextColorPrimary,
+                                  size: 18,
+                                  fontFamily: fontRegular)),
                         ],
                       ),
                     ).onTap(() {
                       if (index == 0) {
                         finish(context);
                       } else {
-                        PurchaseMoreScreen().launch(context);
+                        // PurchaseMoreScreen().launch(context);
                         // BankingPaymentHistory().launch(context);
                       }
                       setState(() {});

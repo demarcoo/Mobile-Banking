@@ -62,8 +62,18 @@ class _BankingSignInState extends State<BankingSignIn> {
                             style: primaryTextStyle(
                                 size: 16, color: Banking_TextColorSecondary))
                         .onTap(() async {
+                      // final anyBiometrics =
+                      await Authentication.hasBiometrics();
+
+                      //     if (anyBiometrics == false) {
+
+                      //     }
                       final isAuthenticated =
                           await Authentication.authenticate();
+                      if (isAuthenticated == true) {
+                        BankingDashboard().launch(context, isNewTask: true);
+                        // Navigator.pushNamed(context, '/BankingDashboard');
+                      }
                     }),
                     16.height,
                     Image.asset(Banking_ic_face_id,

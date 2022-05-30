@@ -3,14 +3,14 @@ import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-class PurchaseMoreScreen extends StatefulWidget {
-  const PurchaseMoreScreen({Key? key}) : super(key: key);
+class BankingTransfer extends StatefulWidget {
+  const BankingTransfer({Key? key}) : super(key: key);
 
   @override
-  _PurchaseMoreScreenState createState() => _PurchaseMoreScreenState();
+  _BankingTransferState createState() => _BankingTransferState();
 }
 
-class _PurchaseMoreScreenState extends State<PurchaseMoreScreen> {
+class _BankingTransferState extends State<BankingTransfer> {
   @override
   void initState() {
     super.initState();
@@ -30,7 +30,6 @@ class _PurchaseMoreScreenState extends State<PurchaseMoreScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-
         body: SizedBox(
           width: context.width(),
           child: Column(
@@ -45,12 +44,12 @@ class _PurchaseMoreScreenState extends State<PurchaseMoreScreen> {
                   )),
               22.height,
               Text(
-                'This is the Lite Version of the Banking App',
+                'Coming Soon',
                 style: boldTextStyle(size: 22),
                 textAlign: TextAlign.center,
               ),
               16.height,
-              PurchaseButton(),
+              // PurchaseButton(),
             ],
           ),
         ).paddingAll(16),
