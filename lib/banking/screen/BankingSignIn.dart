@@ -1,3 +1,4 @@
+import 'package:bankingapp/API/local_auth_api.dart';
 import 'package:bankingapp/banking/screen/BankingDashboard.dart';
 import 'package:bankingapp/banking/screen/BankingForgotPassword.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
@@ -39,7 +40,9 @@ class _BankingSignInState extends State<BankingSignIn> {
                 8.height,
                 Align(
                   alignment: Alignment.centerRight,
-                  child: Text(Banking_lbl_Forgot, style: secondaryTextStyle(size: 16)).onTap(
+                  child: Text(Banking_lbl_Forgot,
+                          style: secondaryTextStyle(size: 16))
+                      .onTap(
                     () {
                       BankingForgotPassword().launch(context);
                     },
@@ -55,9 +58,16 @@ class _BankingSignInState extends State<BankingSignIn> {
                 16.height,
                 Column(
                   children: [
-                    Text(Banking_lbl_Login_with_FaceID, style: primaryTextStyle(size: 16, color: Banking_TextColorSecondary)).onTap(() {}),
+                    Text(Banking_lbl_Login_with_FaceID,
+                            style: primaryTextStyle(
+                                size: 16, color: Banking_TextColorSecondary))
+                        .onTap(() async {
+                      final isAuthenticated =
+                          await Authentication.authenticate();
+                    }),
                     16.height,
-                    Image.asset(Banking_ic_face_id, color: Banking_Primary, height: 40, width: 40),
+                    Image.asset(Banking_ic_face_id,
+                        color: Banking_Primary, height: 40, width: 40),
                   ],
                 ).center(),
               ],
@@ -65,7 +75,9 @@ class _BankingSignInState extends State<BankingSignIn> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Text(Banking_lbl_app_Name.toUpperCase(), style: primaryTextStyle(size: 16, color: Banking_TextColorSecondary)),
+            child: Text(Banking_lbl_app_Name.toUpperCase(),
+                style: primaryTextStyle(
+                    size: 16, color: Banking_TextColorSecondary)),
           ).paddingBottom(16),
         ],
       ),
