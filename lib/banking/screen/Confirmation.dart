@@ -8,12 +8,11 @@ import 'package:nb_utils/nb_utils.dart';
 //   @override
 //   Widget build(BuildContext context) {
 //     return AppButton(
-//       text: 'Purchase for more screen',
+//       text: 'Coming Soon',
 //       color: Banking_Primary,
 //       textStyle: boldTextStyle(color: Colors.white),
 //       shapeBorder: RoundedRectangleBorder(borderRadius: radius(10)),
 //       onTap: () {
-//         launchURL(purChaseUrl);
 //       },
 //     );
 //   }

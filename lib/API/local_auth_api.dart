@@ -13,24 +13,34 @@ class Authentication {
     }
   }
 
+  static Future<bool> anyBiometrics() async {
+    final List<BiometricType> availableBiometrics =
+        await _auth.getAvailableBiometrics();
+
+    if (availableBiometrics.isNotEmpty) {
+      return true; // Some biometrics are enrolled.
+    }
+    return false;
+  }
+
   static Future<bool> authenticate() async {
     final isAvailable = await hasBiometrics();
     if (!isAvailable) return false;
+    // final isEnrolled = await anyBiometrics();
+    // if (!isEnrolled) return false;
     try {
       return await _auth.authenticate(
-          localizedReason: 'Please complete the biometrics to proceed.',
-          options: const AuthenticationOptions(useErrorDialogs: false));
+          localizedReason: 'Please Scan to Authenticate',
+          options: const AuthenticationOptions(
+              useErrorDialogs: true, stickyAuth: true, biometricOnly: true));
     } on PlatformException catch (e) {
+      print(e);
+      if (e.code == auth_error.notAvailable) {
+        // Add handling of no hardware here.
+      } else if (e.code == auth_error.notEnrolled) {
+        // ...
+      }
       return false;
     }
-    // bool isAuthenticated = false;
-
-    // // if (isBiometricSupported && canCheckBiometrics) {
-    // //   isAuthenticated = await auth.authenticate(
-    // //     localizedReason: 'Please complete the biometrics to proceed.',
-    // //   );
-    // // }
-
-    // return isAuthenticated;
   }
 }

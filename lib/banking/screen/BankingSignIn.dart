@@ -64,10 +64,6 @@ class _BankingSignInState extends State<BankingSignIn> {
                         .onTap(() async {
                       // final anyBiometrics =
                       await Authentication.hasBiometrics();
-
-                      //     if (anyBiometrics == false) {
-
-                      //     }
                       final isAuthenticated =
                           await Authentication.authenticate();
                       if (isAuthenticated == true) {
