@@ -1,5 +1,8 @@
+import 'package:bankingapp/banking/screen/BankingChooseBanks.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
+import 'package:bankingapp/banking/utils/BankingWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/model/BankingModel.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
@@ -9,6 +12,7 @@ import 'package:bankingapp/banking/utils/BankingStrings.dart';
 
 class BankingTransfer extends StatefulWidget {
   const BankingTransfer({Key? key}) : super(key: key);
+  static var tag = "/transfer";
 
   @override
   _BankingTransferState createState() => _BankingTransferState();
@@ -47,24 +51,91 @@ class _BankingTransferState extends State<BankingTransfer> {
                     style: boldTextStyle(
                         color: Banking_TextColorPrimary, size: 35)),
                 8.height,
-                Card(
-                  color: Banking_Primary,
-                  child: Text('yess'),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 20, 0, 8),
+                  padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                  height: 240,
+                  decoration: boxDecorationWithRoundedCorners(
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: defaultBoxShadow()),
+                  child: Container(
+                    height: 130,
+                    child: TopCard(
+                      name: 'JUANITO DAVID',
+                      acctype: 'Savings Account',
+                      acno: '114414111262',
+                      bal: 'RM 5555',
+                    ),
+                  ),
                 ),
-                // TextFormField(
-                //   decoration: InputDecoration(
-                //     hintText: "Search Payment",
-                //     labelStyle: primaryTextStyle(
-                //         size: textSizeLargeMedium.toInt(),
-                //         color: Banking_greyColor),
-                //     suffixIcon:
-                //         Icon(Icons.search, size: 30, color: Banking_greyColor),
-                //     enabledBorder: UnderlineInputBorder(
-                //         borderSide: BorderSide(color: Colors.black12)),
-                //     focusedBorder: UnderlineInputBorder(
-                //         borderSide: BorderSide(color: Banking_greyColor)),
-                //   ),
+                // Row(
+                //   children: [
+                //     EditText(
+                //       text: ('Recipient Account'),
+                //       isPassword: false,
+                //     )
+                //   ],
                 // ),
+                SizedBox(height: 100),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(12)
+                    ],
+                    decoration: InputDecoration(
+                      hintText: "Account No.",
+                      labelStyle: primaryTextStyle(
+                          size: textSizeLargeMedium.toInt(),
+                          color: Banking_greyColor),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black12)),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Banking_greyColor)),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          width: 120,
+                          child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChooseBank(),
+                                      settings:
+                                          RouteSettings(name: '/choosebank')),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.money,
+                                color: Colors.black,
+                              ),
+                              label: Text(
+                                'Banks',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Banking_Primary),
+                                  shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  )))),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 20.height,
               ],
             ),

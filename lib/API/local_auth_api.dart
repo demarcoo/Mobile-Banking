@@ -26,8 +26,6 @@ class Authentication {
   static Future<bool> authenticate() async {
     final isAvailable = await hasBiometrics();
     if (!isAvailable) return false;
-    // final isEnrolled = await anyBiometrics();
-    // if (!isEnrolled) return false;
     try {
       return await _auth.authenticate(
           localizedReason: 'Please Scan to Authenticate',

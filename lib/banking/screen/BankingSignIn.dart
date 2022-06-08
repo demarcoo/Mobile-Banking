@@ -1,6 +1,7 @@
 import 'package:bankingapp/API/local_auth_api.dart';
 import 'package:bankingapp/banking/screen/BankingDashboard.dart';
 import 'package:bankingapp/banking/screen/BankingForgotPassword.dart';
+import 'package:bankingapp/banking/screen/BankingHome1.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingStrings.dart';

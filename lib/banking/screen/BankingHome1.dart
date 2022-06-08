@@ -46,24 +46,36 @@ class BankingHome1State extends State<BankingHome1> {
               pinned: true,
               titleSpacing: 0,
               automaticallyImplyLeading: false,
-              backgroundColor: innerBoxIsScrolled ? Banking_Primary : Banking_app_Background,
+              backgroundColor:
+                  innerBoxIsScrolled ? Banking_Primary : Banking_app_Background,
               actionsIconTheme: IconThemeData(opacity: 0.0),
               title: Container(
                 padding: EdgeInsets.fromLTRB(16, 42, 16, 32),
                 margin: EdgeInsets.only(bottom: 8, top: 8),
                 child: Row(
                   children: [
-                    CircleAvatar(backgroundImage: AssetImage(Banking_ic_user1), radius: 24),
+                    CircleAvatar(
+                        backgroundImage: AssetImage(Banking_ic_user1),
+                        radius: 24),
                     10.width,
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Hello,Laura", style: primaryTextStyle(color: Banking_TextColorWhite, size: 16, fontFamily: fontRegular)),
-                        Text("How are you today?", style: primaryTextStyle(color: Banking_TextColorWhite, size: 16, fontFamily: fontRegular)),
+                        Text("Hello,",
+                            style: primaryTextStyle(
+                                color: Banking_TextColorWhite,
+                                size: 16,
+                                fontFamily: fontRegular)),
+                        Text("Juanito David",
+                            style: primaryTextStyle(
+                                color: Banking_TextColorWhite,
+                                size: 16,
+                                fontFamily: fontRegular)),
                       ],
                     ).expand(),
-                    Icon(Icons.notifications, size: 30, color: Banking_whitePureColor)
+                    Icon(Icons.notifications,
+                        size: 30, color: Banking_whitePureColor)
                   ],
                 ),
               ),
@@ -73,73 +85,93 @@ class BankingHome1State extends State<BankingHome1> {
                     Container(
                       height: 250,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(begin: Alignment.bottomLeft, end: Alignment.topLeft, colors: <Color>[Banking_Primary, Banking_palColor]),
+                        gradient: LinearGradient(
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topLeft,
+                            colors: <Color>[Banking_Primary, Banking_palColor]),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.fromLTRB(16, 80, 16, 8),
+                      margin: EdgeInsets.fromLTRB(16, 80, 16, 0),
                       padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
-                      decoration: boxDecorationWithRoundedCorners(borderRadius: BorderRadius.circular(10), boxShadow: defaultBoxShadow()),
+                      decoration: boxDecorationWithRoundedCorners(
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: defaultBoxShadow()),
                       child: Column(
                         children: [
                           Container(
-                            height: 130,
+                            height: 250,
                             child: PageView(
                               children: [
-                                TopCard(name: "Default Account", acno: "1234567899", bal: "\$12,500"),
-                                TopCard(name: "Adam Johnson", acno: "9874563210", bal: "\$18,000"),
-                                TopCard(name: "Ana Willson", acno: "5821479630", bal: "\$12,500"),
-                              ],
-                              onPageChanged: (value) {
-                                setState(() => currentIndexPage = value);
-                              },
+                                TopCard(
+                                    name: "Juanito David",
+                                    acctype: "Savings Account",
+                                    acno: "1234567899",
+                                    bal: "\$12,500")
+                                //   TopCard(name: "Adam Johnson", acno: "9874563210", bal: "\$18,000"),
+                                //   TopCard(name: "Ana Willson", acno: "5821479630", bal: "\$12,500"),
+                              ]
+                              // onPageChanged: (value) {
+                              //   setState(() => currentIndexPage = value);
+                              ,
                             ),
                           ),
-                          8.height,
                           Align(
                             alignment: Alignment.center,
-                            child: DotsIndicator(
-                              dotsCount: 3,
-                              position: currentIndexPage.toDouble(),
-                              decorator: DotsDecorator(
-                                size: Size.square(8.0),
-                                activeSize: Size.square(8.0),
-                                color: Banking_view_color,
-                                activeColor: Banking_TextColorPrimary,
-                              ),
-                            ),
+                            // child: DotsIndicator(
+                            //   dotsCount: 1,
+                            //   position: currentIndexPage.toDouble(),
+                            //   decorator: DotsDecorator(
+                            //     size: Size.square(8.0),
+                            //     activeSize: Size.square(8.0),
+                            //     color: Banking_view_color,
+                            //     activeColor: Banking_TextColorPrimary,
+                            //   ),
+                            // ),
                           ),
-                          10.height,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(top: 8, bottom: 8),
-                                decoration: boxDecorationWithRoundedCorners(backgroundColor: Banking_Primary, borderRadius: BorderRadius.circular(8)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.payment, color: Banking_TextColorWhite, size: 24),
-                                    10.width,
-                                    Text('Payment', style: primaryTextStyle(size: 16, color: Banking_TextColorWhite)),
-                                  ],
-                                ),
-                              ).expand(),
-                              10.width,
-                              Container(
-                                padding: EdgeInsets.only(top: 8, bottom: 8),
-                                decoration: boxDecorationWithRoundedCorners(backgroundColor: Banking_Primary, borderRadius: BorderRadius.circular(8)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(Banking_ic_Transfer, color: Banking_TextColorWhite),
-                                    10.width,
-                                    Text('Transfer', style: primaryTextStyle(size: 16, color: Banking_TextColorWhite)),
-                                  ],
-                                ),
-                              ).expand(),
-                            ],
-                          ).paddingAll(16)
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Container(
+                          //       padding: EdgeInsets.only(top: 8, bottom: 8),
+                          //       decoration: boxDecorationWithRoundedCorners(
+                          //           backgroundColor: Banking_Primary,
+                          //           borderRadius: BorderRadius.circular(8)),
+                          //       child: Row(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           Icon(Icons.payment,
+                          //               color: Banking_TextColorWhite,
+                          //               size: 24),
+                          //           10.width,
+                          //           Text('Payment',
+                          //               style: primaryTextStyle(
+                          //                   size: 16,
+                          //                   color: Banking_TextColorWhite)),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     10.width,
+                          //     Container(
+                          //       padding: EdgeInsets.only(top: 8, bottom: 8),
+                          //       decoration: boxDecorationWithRoundedCorners(
+                          //           backgroundColor: Banking_Primary,
+                          //           borderRadius: BorderRadius.circular(8)),
+                          //       child: Row(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           SvgPicture.asset(Banking_ic_Transfer,
+                          //               color: Banking_TextColorWhite),
+                          //           10.width,
+                          //           Text('Transfer',
+                          //               style: primaryTextStyle(
+                          //                   size: 16,
+                          //                   color: Banking_TextColorWhite)),
+                          //         ],
+                          //       ),
+                          //     ).expand(),
+                          //   ],
+                          // ).paddingAll(16)
                         ],
                       ),
                     )
@@ -159,8 +191,16 @@ class BankingHome1State extends State<BankingHome1> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Recently Transaction", style: primaryTextStyle(size: 16, color: Banking_TextColorPrimary, fontFamily: fontRegular)),
-                    Text("22 Feb 2020", style: primaryTextStyle(size: 16, color: Banking_TextColorSecondary, fontFamily: fontRegular)),
+                    Text("Recent Transaction",
+                        style: primaryTextStyle(
+                            size: 16,
+                            color: Banking_TextColorPrimary,
+                            fontFamily: fontRegular)),
+                    Text("22 Feb 2020",
+                        style: primaryTextStyle(
+                            size: 16,
+                            color: Banking_TextColorSecondary,
+                            fontFamily: fontRegular)),
                   ],
                 ),
                 ListView.builder(
@@ -172,21 +212,36 @@ class BankingHome1State extends State<BankingHome1> {
                     return Container(
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.only(top: 8, bottom: 8),
-                      decoration: boxDecorationRoundedWithShadow(8, backgroundColor: Banking_whitePureColor, spreadRadius: 0, blurRadius: 0),
+                      decoration: boxDecorationRoundedWithShadow(8,
+                          backgroundColor: Banking_whitePureColor,
+                          spreadRadius: 0,
+                          blurRadius: 0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(Icons.account_balance_wallet, size: 30, color: mList1[index].color),
+                          Icon(Icons.account_balance_wallet,
+                              size: 30, color: mList1[index].color),
                           10.width,
-                          Text('${mList1[index].title}', style: primaryTextStyle(size: 16, color: mList1[index].color, fontFamily: fontMedium)).expand(),
-                          Text(mList1[index].bal!, style: primaryTextStyle(color: mList1[index].color, size: 16)),
+                          Text('${mList1[index].title}',
+                                  style: primaryTextStyle(
+                                      size: 16,
+                                      color: mList1[index].color,
+                                      fontFamily: fontMedium))
+                              .expand(),
+                          Text(mList1[index].bal!,
+                              style: primaryTextStyle(
+                                  color: mList1[index].color, size: 16)),
                         ],
                       ),
                     );
                   },
                 ),
                 16.height,
-                Text("22 Feb 2020", style: primaryTextStyle(size: 16, color: Banking_TextColorSecondary, fontFamily: fontRegular)),
+                Text("22 Feb 2020",
+                    style: primaryTextStyle(
+                        size: 16,
+                        color: Banking_TextColorSecondary,
+                        fontFamily: fontRegular)),
                 Divider(),
                 ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -198,14 +253,31 @@ class BankingHome1State extends State<BankingHome1> {
                     return Container(
                       padding: EdgeInsets.all(8),
                       margin: EdgeInsets.only(top: 8, bottom: 8),
-                      decoration: boxDecorationRoundedWithShadow(8, backgroundColor: Banking_whitePureColor, spreadRadius: 0, blurRadius: 0),
+                      decoration: boxDecorationRoundedWithShadow(8,
+                          backgroundColor: Banking_whitePureColor,
+                          spreadRadius: 0,
+                          blurRadius: 0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset(data.icon!, height: 30, width: 30, color: index == 2 ? Banking_Primary : Banking_Primary),
+                          Image.asset(data.icon!,
+                              height: 30,
+                              width: 30,
+                              color: index == 2
+                                  ? Banking_Primary
+                                  : Banking_Primary),
                           10.width,
-                          Text(data.title!, style: primaryTextStyle(size: 16, color: Banking_TextColorPrimary, fontFamily: fontRegular)).expand(),
-                          Align(alignment: Alignment.centerRight, child: Text(data.charge!, style: primaryTextStyle(color: data.color, size: 16)))
+                          Text(data.title!,
+                                  style: primaryTextStyle(
+                                      size: 16,
+                                      color: Banking_TextColorPrimary,
+                                      fontFamily: fontRegular))
+                              .expand(),
+                          Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(data.charge!,
+                                  style: primaryTextStyle(
+                                      color: data.color, size: 16)))
                         ],
                       ),
                     );

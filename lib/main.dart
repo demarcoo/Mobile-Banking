@@ -1,4 +1,6 @@
+import 'package:bankingapp/banking/screen/BankingChooseBanks.dart';
 import 'package:bankingapp/banking/screen/BankingSplash.dart';
+import 'package:bankingapp/banking/screen/BankingTransfer.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -14,6 +16,11 @@ class MyApp extends StatelessWidget {
       scrollBehavior: SBehavior(),
       home: BankingSplash(),
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/choosebank': (context) => ChooseBank(),
+        '/transfer': (context) => BankingTransfer(),
+        // '/location': (context) => ChooseLocation(),
+      },
     );
   }
 }
