@@ -16,7 +16,7 @@ class ChooseBank extends StatefulWidget {
 
 class _ChooseBankState extends State<ChooseBank> {
   List<Banks> banks = [
-    Banks(logo: 'maybank_logo.jpg', name: 'Maybank'),
+    Banks(logo: 'maybank_logo.jpg', name: 'Maybank/Maybank Islamic'),
     Banks(logo: 'RHB_logo.jpg', name: 'RHB Bank'),
     Banks(logo: 'publicbank_logo.png', name: 'Public Bank'),
     Banks(logo: 'CIMB_logo.png', name: 'CIMB'),

@@ -1,6 +1,7 @@
 import 'package:bankingapp/banking/screen/BankingChooseBanks.dart';
 import 'package:bankingapp/banking/screen/BankingSplash.dart';
 import 'package:bankingapp/banking/screen/BankingTransfer.dart';
+import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -14,11 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Capital Bank',
       scrollBehavior: SBehavior(),
-      home: BankingSplash(),
+      home: BankingTransferDetails(),
+      // home: BankingSplash(),
       debugShowCheckedModeBanner: false,
       routes: {
         '/choosebank': (context) => ChooseBank(),
         '/transfer': (context) => BankingTransfer(),
+        '/transferdetails': (context) => BankingTransferDetails()
         // '/location': (context) => ChooseLocation(),
       },
     );
