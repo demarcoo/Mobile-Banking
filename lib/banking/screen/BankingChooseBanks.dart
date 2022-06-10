@@ -1,3 +1,5 @@
+import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
+import 'package:bankingapp/banking/screen/BankingTransferToAccount.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,20 @@ class _ChooseBankState extends State<ChooseBank> {
     Banks(logo: 'publicbank_logo.png', name: 'Public Bank'),
     Banks(logo: 'CIMB_logo.png', name: 'CIMB'),
   ];
+
+  void updateBank(index) async {
+    //navigate to next screen and transferring the data
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchBankAccount(),
+        settings: RouteSettings(
+          arguments: banks[index],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +83,7 @@ class _ChooseBankState extends State<ChooseBank> {
                         child: Card(
                           child: ListTile(
                             onTap: () {
-                              // updateTime(index);
+                              updateBank(index);
                             },
                             title: Text(banks[index].name),
                             leading: CircleAvatar(

@@ -78,25 +78,45 @@ class _BankingTransferState extends State<BankingTransfer> {
                 // ),
                 SizedBox(height: 100),
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(12)
-                    ],
-                    decoration: InputDecoration(
-                      hintText: "Account No.",
-                      labelStyle: primaryTextStyle(
-                          size: textSizeLargeMedium.toInt(),
-                          color: Banking_greyColor),
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black12)),
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Banking_greyColor)),
-                    ),
-                  ),
+                // Container(
+                //   child: TextFormField(
+                //     readOnly: true,
+                //     inputFormatters: <TextInputFormatter>[
+                //       FilteringTextInputFormatter.digitsOnly,
+                //     ],
+                //     decoration: InputDecoration(
+                //       hintText: "Bank Name",
+                //       labelStyle: primaryTextStyle(
+                //           size: textSizeLargeMedium.toInt(),
+                //           color: Banking_greyColor),
+                //       enabledBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(color: Colors.black12)),
+                //       focusedBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(color: Banking_greyColor)),
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //   child: TextFormField(
+                //     keyboardType: TextInputType.number,
+                //     inputFormatters: <TextInputFormatter>[
+                //       FilteringTextInputFormatter.digitsOnly,
+                //       LengthLimitingTextInputFormatter(12)
+                //     ],
+                //     decoration: InputDecoration(
+                //       hintText: "Account No.",
+                //       labelStyle: primaryTextStyle(
+                //           size: textSizeLargeMedium.toInt(),
+                //           color: Banking_greyColor),
+                //       enabledBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(color: Colors.black12)),
+                //       focusedBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(color: Banking_greyColor)),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(
+                  height: 20,
                 ),
                 Center(
                   child: Row(
@@ -120,7 +140,7 @@ class _BankingTransferState extends State<BankingTransfer> {
                                 color: Colors.black,
                               ),
                               label: Text(
-                                'Banks',
+                                'Choose Bank',
                                 style: TextStyle(color: Colors.black),
                               ),
                               style: ButtonStyle(
