@@ -5,3 +5,10 @@ class Banks {
 
   Banks({required this.logo, required this.name});
 }
+
+// class BankAccount {
+//   String name;
+//   int accNumber;
+
+//   BankAccount({required this.name, required this.accNumber});
+// }

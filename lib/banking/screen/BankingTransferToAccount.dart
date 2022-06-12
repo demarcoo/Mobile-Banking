@@ -1,11 +1,19 @@
+import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
+import 'package:bankingapp/banking/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
-import 'package:bankingapp/banking/services/bank_list.dart';
+import 'package:bankingapp/banking/services/classes.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
+import 'package:bankingapp/banking/services/database.dart';
+import 'package:bankingapp/banking/screen/GetBankAcc.dart';
 
 class SearchBankAccount extends StatefulWidget {
   const SearchBankAccount({Key? key}) : super(key: key);
@@ -15,6 +23,9 @@ class SearchBankAccount extends StatefulWidget {
 }
 
 class _SearchBankAccountState extends State<SearchBankAccount> {
+  TextEditingController textFieldController = TextEditingController();
+  final db = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     final bank = ModalRoute.of(context)!.settings.arguments as Banks;
@@ -81,33 +92,41 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                       ],
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      width: 350,
-                      child: TextField(
-                        style: TextStyle(fontSize: 18),
-                        readOnly: false,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(12),
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                          hintText: 'Recipient Account No.',
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 15.0),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Banking_Primary),
+                        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                        width: 350,
+                        child: TextField(
+                          controller: textFieldController,
+                          style: TextStyle(fontSize: 18),
+                          readOnly: false,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(12),
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          decoration: InputDecoration(
+                            hintText: 'Recipient Account No.',
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 15.0),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Banking_Primary),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
+                        )),
                     SizedBox(
                       height: 20,
                     ),
                     Container(
                       child: ElevatedButton.icon(
                           onPressed: () {
-                            //searchExistingAcc
+                            final accName =
+                                getBankAcc(textFieldController.text);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BankingTransferDetails(),
+                                settings: RouteSettings(arguments: bank),
+                              ),
+                            );
                           },
                           style: ButtonStyle(
                               backgroundColor:

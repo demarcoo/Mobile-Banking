@@ -1,4 +1,4 @@
-import 'package:bankingapp/banking/services/bank_list.dart';
+import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +9,9 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 
 class BankingTransferDetails extends StatefulWidget {
-  const BankingTransferDetails({Key? key}) : super(key: key);
-
+  const BankingTransferDetails({
+    Key? key,
+  }) : super(key: key);
   @override
   State<BankingTransferDetails> createState() => _BankingTransferDetailsState();
 }
@@ -19,6 +20,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
   @override
   Widget build(BuildContext context) {
     final bank = ModalRoute.of(context)!.settings.arguments as Banks;
+    // final accName = ModalRoute.of(context)!.settings.arguments;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Banking_app_Background,
@@ -75,7 +77,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                       size: 50,
                                     ),
                                     Text(
-                                      '/Account Number/',
+                                      'aa',
                                       style: TextStyle(
                                           fontWeight: fontWeightBoldGlobal),
                                     )
@@ -130,43 +132,43 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 370,
-                      height: 60,
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: Banking_Primary)),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                                backgroundImage:
-                                    AssetImage('images/banking/${bank.logo}')),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: 210,
-                              child: Text(
-                                bank.name,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 40,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 0),
-                              child: Icon(
-                                Icons.arrow_right,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   width: 370,
+                    //   height: 60,
+                    //   child: OutlinedButton(
+                    //     onPressed: () {},
+                    //     style: OutlinedButton.styleFrom(
+                    //         side: BorderSide(color: Banking_Primary)),
+                    //     child: Row(
+                    //       children: [
+                    //         CircleAvatar(
+                    //             backgroundImage:
+                    //                 AssetImage('images/banking/${bank.logo}')),
+                    //         SizedBox(
+                    //           width: 10,
+                    //         ),
+                    //         Container(
+                    //           width: 210,
+                    //           child: Text(
+                    //             bank.name,
+                    //             style: TextStyle(
+                    //                 fontSize: 16, color: Colors.black),
+                    //           ),
+                    //         ),
+                    //         SizedBox(
+                    //           width: 40,
+                    //         ),
+                    //         Container(
+                    //           margin: EdgeInsets.only(left: 0),
+                    //           child: Icon(
+                    //             Icons.arrow_right,
+                    //             color: Colors.black,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Container(
                       width: 370,
                       child: TextField(
@@ -177,7 +179,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: InputDecoration(
-                          hintText: 'Recipient Account No.',
+                          hintText: 'Amount',
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Banking_Primary),
                           ),

@@ -7,7 +7,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:nb_utils/nb_utils.dart';
-import 'package:bankingapp/banking/services/bank_list.dart';
+import 'package:bankingapp/banking/services/classes.dart';
 
 class ChooseBank extends StatefulWidget {
   const ChooseBank({Key? key}) : super(key: key);
