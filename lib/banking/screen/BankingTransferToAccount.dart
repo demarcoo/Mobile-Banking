@@ -14,6 +14,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:bankingapp/banking/services/database.dart';
 import 'package:bankingapp/banking/screen/GetBankAcc.dart';
+import 'package:bankingapp/banking/utils/BankingWidget.dart';
+
+class ScreenArguments {
+  final String accName;
+  final int accNumber;
+
+  ScreenArguments(this.accName, this.accNumber);
+}
 
 class SearchBankAccount extends StatefulWidget {
   const SearchBankAccount({Key? key}) : super(key: key);
@@ -25,6 +33,47 @@ class SearchBankAccount extends StatefulWidget {
 class _SearchBankAccountState extends State<SearchBankAccount> {
   TextEditingController textFieldController = TextEditingController();
   final db = FirebaseFirestore.instance;
+
+  Future<void> _showErrorDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Invalid Input'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text(
+                    'The inputted account is invalid, Please try again with the correct account number.'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String? get _errorText {
+    // at any time, we can get the text from _controller.value.text
+    final text = textFieldController.text;
+    // Note: you can do your own custom validation here
+    // Move this logic this outside the widget for more testable code
+    if (text.isEmpty) {
+      return 'Can\'t be empty';
+    }
+    // return null if the text is valid
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +153,7 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                             FilteringTextInputFormatter.digitsOnly
                           ],
                           decoration: InputDecoration(
+                            errorText: _errorText,
                             hintText: 'Recipient Account No.',
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 15.0),
@@ -117,16 +167,30 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                     ),
                     Container(
                       child: ElevatedButton.icon(
-                          onPressed: () {
-                            final accName =
-                                getBankAcc(textFieldController.text);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BankingTransferDetails(),
-                                settings: RouteSettings(arguments: bank),
-                              ),
-                            );
+                          onPressed: () async {
+                            if (textFieldController.text.length == 12) {
+                              final accName = await getBankAcc(
+                                  textFieldController.text, bank.name);
+                              if (accName != '') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BankingTransferDetails(),
+                                    settings: RouteSettings(
+                                        arguments: ScreenArguments(
+                                            accName,
+                                            int.parse(
+                                                textFieldController.text))),
+                                  ),
+                                );
+                              } else {
+                                print(bank.name);
+                              }
+                            } else {
+                              _showErrorDialog(context);
+                              // print('Invalid Account Number');
+                            }
                           },
                           style: ButtonStyle(
                               backgroundColor:

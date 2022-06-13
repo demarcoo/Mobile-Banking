@@ -1,9 +1,11 @@
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
 class BankingButton extends StatefulWidget {
@@ -248,6 +250,21 @@ class EditTextState extends State<EditText> {
       );
     }
   }
+}
+
+Widget alertBox(var msg, var title, BuildContext context) {
+  return AlertDialog(
+    title: title,
+    content: msg,
+    actions: <Widget>[
+      TextButton(
+        child: const Text('OK'),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+    ],
+  );
 }
 
 Widget headerView(var title, double height, BuildContext context) {

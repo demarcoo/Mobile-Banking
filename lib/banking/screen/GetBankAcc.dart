@@ -1,22 +1,30 @@
+import 'dart:math';
+
 import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-void getBankAcc(input) {
-  var accName;
+Future<dynamic> getBankAcc(input, bank) async {
+  late var accName;
+  late dynamic accNumber;
+  late dynamic accDetails;
 
-  FirebaseFirestore.instance
+  await FirebaseFirestore.instance
       .collection('users')
       .where('Account Number', isEqualTo: int.parse(input))
+      .where('Bank', isEqualTo: bank)
       .get()
       .then(
-    (QuerySnapshot querySnapshot) {
-      if (querySnapshot.docs.length == 0) {
-        print('no data');
+    (QuerySnapshot querySnapshot) async {
+      if (querySnapshot.docs.isEmpty) {
+        accName = '';
+        return;
       } else {
-        accName = querySnapshot.docs.first['Name'];
-        print(accName);
+        print(querySnapshot.docs.first['Name']);
+        accName = await querySnapshot.docs.first['Name'];
+        accNumber = await querySnapshot.docs.first['Account Number'].toString();
       }
     },
   );
+  return accName;
 }

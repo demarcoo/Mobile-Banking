@@ -1,3 +1,4 @@
+import 'package:bankingapp/banking/screen/BankingTransferToAccount.dart';
 import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ class BankingTransferDetails extends StatefulWidget {
 class _BankingTransferDetailsState extends State<BankingTransferDetails> {
   @override
   Widget build(BuildContext context) {
-    final bank = ModalRoute.of(context)!.settings.arguments as Banks;
-    // final accName = ModalRoute.of(context)!.settings.arguments;
+    // final bank = ModalRoute.of(context)!.settings.arguments as Banks;
+    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Banking_app_Background,
@@ -112,7 +113,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                       size: 50,
                                     ),
                                     Text(
-                                      'Recipient Account',
+                                      args!.accName,
                                       style: TextStyle(
                                           fontWeight: fontWeightBoldGlobal),
                                     )
