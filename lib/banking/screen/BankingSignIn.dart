@@ -7,7 +7,11 @@ import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingStrings.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:bankingapp/banking/services/phone_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bankingapp/banking/services/user_auth.dart';
 
 class BankingSignIn extends StatefulWidget {
   static var tag = "/BankingSignIn";
@@ -22,8 +26,40 @@ class _BankingSignInState extends State<BankingSignIn> {
     super.initState();
   }
 
+  Future<void> _showErrorDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Incorrect Credentials'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text(
+                    'Your username or password is incorrect, please try again'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth _phoneAuth = FirebaseAuth.instance;
+    TextEditingController usernameController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
     return Scaffold(
       body: Stack(
         children: [
@@ -35,25 +71,92 @@ class _BankingSignInState extends State<BankingSignIn> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Text(Banking_lbl_SignIn, style: boldTextStyle(size: 30)),
-                EditText(text: "Phone", isPassword: false),
+                TextField(
+                  controller: usernameController,
+                  style: TextStyle(fontSize: 16),
+                  readOnly: false,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(20),
+                  ],
+                  decoration: InputDecoration(
+                    // errorText: _errorText,
+                    hintText: 'Username',
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Banking_Primary),
+                    ),
+                  ),
+                ),
                 8.height,
-                EditText(text: "Password", isPassword: true, isSecure: true),
-                8.height,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(Banking_lbl_Forgot,
-                          style: secondaryTextStyle(size: 16))
-                      .onTap(
-                    () {
-                      BankingForgotPassword().launch(context);
-                    },
+                TextField(
+                  controller: passwordController,
+                  style: TextStyle(fontSize: 16),
+                  readOnly: false,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(20),
+                  ],
+                  decoration: InputDecoration(
+                    // errorText: _errorText,
+                    hintText: 'Password',
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Banking_Primary),
+                    ),
                   ),
                 ),
                 16.height,
                 BankingButton(
                   textContent: Banking_lbl_SignIn,
-                  onPressed: () {
-                    BankingDashboard().launch(context, isNewTask: true);
+                  onPressed: () async {
+                    List isLoggedin = await userAuth(
+                        usernameController.text, passwordController.text);
+
+                    // Future<List<User>> accInfo
+
+                    if (isLoggedin.isNotEmpty) {
+                      BankingDashboard().launch(context, isNewTask: true);
+                    } else {
+                      _showErrorDialog(context);
+                      print('No Data');
+
+                      return;
+                    }
+                    // await FirebaseAuth.instance.verifyPhoneNumber(
+                    //   phoneNumber: '+15551234567',
+                    //   verificationCompleted:
+                    //       (PhoneAuthCredential credential) async {
+                    //     // ANDROID ONLY!
+
+                    //     // Sign the user in (or link) with the auto-generated credential
+                    //     await auth.signInWithCredential(credential);
+                    //   },
+                    //   verificationFailed: (FirebaseAuthException e) {
+                    //     if (e.code == 'invalid-phone-number') {
+                    //       print('The provided phone number is not valid.');
+                    //     }
+
+                    //     // Handle other errors
+                    //   },
+                    //   codeSent:
+                    //       (String verificationId, int? resendToken) async {
+                    //     // Update the UI - wait for the user to enter the SMS code
+                    //     String smsCode = 'xxxx';
+
+                    //     // Create a PhoneAuthCredential with the code
+                    //     PhoneAuthCredential credential =
+                    //         PhoneAuthProvider.credential(
+                    //             verificationId: verificationId,
+                    //             smsCode: smsCode);
+
+                    //     // Sign the user in (or link) with the credential
+                    //     await auth.signInWithCredential(credential);
+                    //   },
+                    //   codeAutoRetrievalTimeout: (String verificationId) {
+                    //     // Auto-resolution timed out...
+                    //   },
+                    // );
+                    // phoneAuthentication();
+                    // // BankingDashboard().launch(context, isNewTask: true);
                   },
                 ),
                 16.height,
@@ -63,13 +166,10 @@ class _BankingSignInState extends State<BankingSignIn> {
                             style: primaryTextStyle(
                                 size: 16, color: Banking_TextColorSecondary))
                         .onTap(() async {
-                      // final anyBiometrics =
-                      await Authentication.hasBiometrics();
                       final isAuthenticated =
-                          await Authentication.authenticate();
+                          await biomAuthentication.authenticate();
                       if (isAuthenticated == true) {
                         BankingDashboard().launch(context, isNewTask: true);
-                        // Navigator.pushNamed(context, '/BankingDashboard');
                       }
                     }),
                     16.height,

@@ -6,6 +6,20 @@ class Banks {
   Banks({required this.logo, required this.name});
 }
 
+class User {
+  late bool? isLoggedin;
+  late String? name;
+  late String? accNum;
+  late String? phone;
+  late String? bank;
+
+  User({
+    this.name,
+    this.accNum,
+    this.phone,
+    this.bank,
+  });
+}
 // class BankAccount {
 //   String name;
 //   int accNumber;

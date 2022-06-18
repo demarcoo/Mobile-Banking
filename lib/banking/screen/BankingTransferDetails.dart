@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
+import 'package:bankingapp/API/local_auth_api.dart';
 
 class BankingTransferDetails extends StatefulWidget {
   const BankingTransferDetails({
@@ -113,9 +114,16 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                       size: 50,
                                     ),
                                     Text(
-                                      args!.accName,
+                                      args.accNumber.toString(),
                                       style: TextStyle(
-                                          fontWeight: fontWeightBoldGlobal),
+                                          fontWeight: fontWeightBoldGlobal,
+                                          fontSize: 16),
+                                    ),
+                                    Text(
+                                      args.accName,
+                                      style: TextStyle(
+                                          fontWeight: fontWeightBoldGlobal,
+                                          fontSize: 15),
                                     )
                                   ],
                                 ),
@@ -133,43 +141,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Container(
-                    //   width: 370,
-                    //   height: 60,
-                    //   child: OutlinedButton(
-                    //     onPressed: () {},
-                    //     style: OutlinedButton.styleFrom(
-                    //         side: BorderSide(color: Banking_Primary)),
-                    //     child: Row(
-                    //       children: [
-                    //         CircleAvatar(
-                    //             backgroundImage:
-                    //                 AssetImage('images/banking/${bank.logo}')),
-                    //         SizedBox(
-                    //           width: 10,
-                    //         ),
-                    //         Container(
-                    //           width: 210,
-                    //           child: Text(
-                    //             bank.name,
-                    //             style: TextStyle(
-                    //                 fontSize: 16, color: Colors.black),
-                    //           ),
-                    //         ),
-                    //         SizedBox(
-                    //           width: 40,
-                    //         ),
-                    //         Container(
-                    //           margin: EdgeInsets.only(left: 0),
-                    //           child: Icon(
-                    //             Icons.arrow_right,
-                    //             color: Colors.black,
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
                     Container(
                       width: 370,
                       child: TextField(
@@ -190,38 +161,20 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                     SizedBox(
                       height: 50,
                     ),
-                    // Expanded(
-                    //   child: Row(
-                    //     children: [
-                    //       TextFormField(
-                    //         keyboardType: TextInputType.number,
-                    //         inputFormatters: [
-                    //           FilteringTextInputFormatter.digitsOnly,
-                    //           LengthLimitingTextInputFormatter(12)
-                    //         ],
-                    //         decoration: InputDecoration(
-                    //           hintText: "Account No.",
-                    //           labelStyle: primaryTextStyle(
-                    //               size: textSizeLargeMedium.toInt(),
-                    //               color: Banking_greyColor),
-                    //           enabledBorder: UnderlineInputBorder(
-                    //               borderSide: BorderSide(color: Colors.black12)),
-                    //           focusedBorder: UnderlineInputBorder(
-                    //               borderSide:
-                    //                   BorderSide(color: Banking_greyColor)),
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
                     ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final isAuthenticated =
+                            await biomAuthentication.authenticate();
+                        if (isAuthenticated == true) {
+                          print('you in!');
+                        }
+                      },
                       icon: Icon(
                         Icons.next_plan,
                         color: Colors.black,
                       ),
                       label: Text(
-                        'Continue',
+                        'Transfer',
                         style: TextStyle(color: Colors.black),
                       ),
                       style: ButtonStyle(

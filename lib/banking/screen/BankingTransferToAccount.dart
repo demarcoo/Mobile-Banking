@@ -13,7 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:bankingapp/banking/services/database.dart';
-import 'package:bankingapp/banking/screen/GetBankAcc.dart';
+import 'package:bankingapp/banking/services/GetBankAcc.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
 
 class ScreenArguments {
@@ -34,7 +34,7 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
   TextEditingController textFieldController = TextEditingController();
   final db = FirebaseFirestore.instance;
 
-  Future<void> _showErrorDialog(BuildContext context) async {
+  Future<void> _showEmptyDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -45,7 +45,35 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
             child: ListBody(
               children: const <Widget>[
                 Text(
-                    'The inputted account is invalid, Please try again with the correct account number.'),
+                    'Invalid account number, please input the correct account and try again'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showErrorDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Invalid Input'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Please input the recipient account number and try again'),
                 // Text('Please try again with the correct account number.'),
               ],
             ),
@@ -141,34 +169,35 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                       ],
                     ),
                     Container(
-                        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                        width: 350,
-                        child: TextField(
-                          controller: textFieldController,
-                          style: TextStyle(fontSize: 18),
-                          readOnly: false,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(12),
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          decoration: InputDecoration(
-                            errorText: _errorText,
-                            hintText: 'Recipient Account No.',
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 15.0),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Banking_Primary),
-                            ),
+                      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      width: 350,
+                      child: TextField(
+                        controller: textFieldController,
+                        style: TextStyle(fontSize: 18),
+                        readOnly: false,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(12),
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: InputDecoration(
+                          errorText: _errorText,
+                          hintText: 'Recipient Account No.',
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 15.0),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary),
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
                     Container(
                       child: ElevatedButton.icon(
                           onPressed: () async {
-                            if (textFieldController.text.length == 12) {
+                            if (textFieldController.text.length != 0) {
                               final accName = await getBankAcc(
                                   textFieldController.text, bank.name);
                               if (accName != '') {
@@ -178,18 +207,18 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                                     builder: (context) =>
                                         BankingTransferDetails(),
                                     settings: RouteSettings(
-                                        arguments: ScreenArguments(
-                                            accName,
-                                            int.parse(
-                                                textFieldController.text))),
+                                      arguments: ScreenArguments(
+                                        accName,
+                                        int.parse(textFieldController.text),
+                                      ),
+                                    ),
                                   ),
                                 );
                               } else {
-                                print(bank.name);
+                                _showEmptyDialog(context);
                               }
                             } else {
                               _showErrorDialog(context);
-                              // print('Invalid Account Number');
                             }
                           },
                           style: ButtonStyle(

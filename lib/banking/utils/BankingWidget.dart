@@ -172,6 +172,7 @@ class EditText extends StatefulWidget {
   var fontFamily;
   var text;
   var maxLine;
+  var isNum;
   TextEditingController? mController;
 
   VoidCallback? onPressed;
@@ -185,6 +186,7 @@ class EditText extends StatefulWidget {
     var this.text = "",
     var this.mController,
     var this.maxLine = 1,
+    var this.isNum = true,
   });
 
   @override
@@ -202,6 +204,29 @@ class EditTextState extends State<EditText> {
           obscureText: widget.isPassword,
           cursorColor: Banking_Primary,
           maxLines: widget.maxLine,
+          inputFormatters: [],
+          style: TextStyle(
+              fontSize: widget.fontSize,
+              color: Banking_TextColorPrimary,
+              fontFamily: widget.fontFamily),
+          decoration: InputDecoration(
+            hintText: widget.text,
+            hintStyle: TextStyle(fontSize: textSizeMedium),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Banking_Primary, width: 0.5),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: Banking_TextColorSecondary, width: 0.5),
+            ),
+          ));
+    } else if (widget.isNum) {
+      return TextField(
+          controller: widget.mController,
+          obscureText: widget.isPassword,
+          cursorColor: Banking_Primary,
+          maxLines: widget.maxLine,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           style: TextStyle(
               fontSize: widget.fontSize,
               color: Banking_TextColorPrimary,
