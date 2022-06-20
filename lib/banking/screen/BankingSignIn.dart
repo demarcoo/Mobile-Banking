@@ -6,12 +6,14 @@ import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingStrings.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/services/phone_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bankingapp/banking/services/user_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class BankingSignIn extends StatefulWidget {
   static var tag = "/BankingSignIn";
@@ -21,9 +23,21 @@ class BankingSignIn extends StatefulWidget {
 }
 
 class _BankingSignInState extends State<BankingSignIn> {
+  final usernameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+
+    init();
+  }
+
+  Future init() async {
+    final username = await UserSecureStorage.getUsername() ?? '';
+
+    setState(() {
+      this.usernameController.text = username;
+    });
   }
 
   Future<void> _showErrorDialog(BuildContext context) async {
@@ -57,7 +71,7 @@ class _BankingSignInState extends State<BankingSignIn> {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth _phoneAuth = FirebaseAuth.instance;
+    // FirebaseAuth _phoneAuth = FirebaseAuth.instance;
     TextEditingController usernameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     return Scaffold(
@@ -108,17 +122,27 @@ class _BankingSignInState extends State<BankingSignIn> {
                 BankingButton(
                   textContent: Banking_lbl_SignIn,
                   onPressed: () async {
-                    List isLoggedin = await userAuth(
+                    Map isLoggedin = await userAuth(
                         usernameController.text, passwordController.text);
-
-                    // Future<List<User>> accInfo
+                    print(isLoggedin['name']);
 
                     if (isLoggedin.isNotEmpty) {
-                      BankingDashboard().launch(context, isNewTask: true);
+                      await UserSecureStorage.setUsername(
+                          usernameController.text);
+                      await UserSecureStorage.setName(isLoggedin['name']);
+                      await UserSecureStorage.setAccNum(
+                          isLoggedin['accnumber']);
+                      await UserSecureStorage.setBank(isLoggedin['bank']);
+                      await UserSecureStorage.setPhone(isLoggedin['phone']);
+                      await UserSecureStorage.setBalance(isLoggedin['bal']);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BankingDashboard(),
+                            settings: RouteSettings(arguments: isLoggedin)),
+                      );
                     } else {
                       _showErrorDialog(context);
-                      print('No Data');
-
                       return;
                     }
                     // await FirebaseAuth.instance.verifyPhoneNumber(

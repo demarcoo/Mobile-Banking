@@ -36,6 +36,8 @@ class _BankingTransferState extends State<BankingTransfer> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    print(args['name']);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Banking_app_Background,
@@ -61,60 +63,14 @@ class _BankingTransferState extends State<BankingTransfer> {
                   child: Container(
                     height: 130,
                     child: TopCard(
-                      name: 'JUANITO DAVID',
+                      name: args['name'],
                       acctype: 'Savings Account',
-                      acno: '114414111262',
-                      bal: 'RM 5555',
+                      acno: args['accnumber'].toString(),
+                      bal: 'RM' + args['bal'].toString(),
                     ),
                   ),
                 ),
-                // Row(
-                //   children: [
-                //     EditText(
-                //       text: ('Recipient Account'),
-                //       isPassword: false,
-                //     )
-                //   ],
-                // ),
                 SizedBox(height: 100),
-
-                // Container(
-                //   child: TextFormField(
-                //     readOnly: true,
-                //     inputFormatters: <TextInputFormatter>[
-                //       FilteringTextInputFormatter.digitsOnly,
-                //     ],
-                //     decoration: InputDecoration(
-                //       hintText: "Bank Name",
-                //       labelStyle: primaryTextStyle(
-                //           size: textSizeLargeMedium.toInt(),
-                //           color: Banking_greyColor),
-                //       enabledBorder: UnderlineInputBorder(
-                //           borderSide: BorderSide(color: Colors.black12)),
-                //       focusedBorder: UnderlineInputBorder(
-                //           borderSide: BorderSide(color: Banking_greyColor)),
-                //     ),
-                //   ),
-                // ),
-                // Container(
-                //   child: TextFormField(
-                //     keyboardType: TextInputType.number,
-                //     inputFormatters: <TextInputFormatter>[
-                //       FilteringTextInputFormatter.digitsOnly,
-                //       LengthLimitingTextInputFormatter(12)
-                //     ],
-                //     decoration: InputDecoration(
-                //       hintText: "Account No.",
-                //       labelStyle: primaryTextStyle(
-                //           size: textSizeLargeMedium.toInt(),
-                //           color: Banking_greyColor),
-                //       enabledBorder: UnderlineInputBorder(
-                //           borderSide: BorderSide(color: Colors.black12)),
-                //       focusedBorder: UnderlineInputBorder(
-                //           borderSide: BorderSide(color: Banking_greyColor)),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(
                   height: 20,
                 ),

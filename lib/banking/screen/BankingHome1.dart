@@ -1,15 +1,18 @@
 import 'package:bankingapp/banking/model/BankingModel.dart';
+import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/banking/utils/BankingDataGenerator.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:bankingapp/banking/screen/BankingHome1.dart';
 
 class BankingHome1 extends StatefulWidget {
   static String tag = '/BankingHome1';
@@ -22,20 +25,27 @@ class BankingHome1State extends State<BankingHome1> {
   int currentIndexPage = 0;
   int? pageLength;
 
+  late List isLoggedin;
   late List<BankingHomeModel> mList1;
   late List<BankingHomeModel2> mList2;
 
   @override
   void initState() {
     super.initState();
+
+    init();
     currentIndexPage = 0;
     pageLength = 3;
     mList1 = bankingHomeList1();
     mList2 = bankingHomeList2();
   }
 
+  Future init() async {}
+
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -67,7 +77,7 @@ class BankingHome1State extends State<BankingHome1> {
                                 color: Banking_TextColorWhite,
                                 size: 16,
                                 fontFamily: fontRegular)),
-                        Text("Juanito David",
+                        Text(args['name'],
                             style: primaryTextStyle(
                                 color: Banking_TextColorWhite,
                                 size: 16,
@@ -104,74 +114,17 @@ class BankingHome1State extends State<BankingHome1> {
                             child: PageView(
                               children: [
                                 TopCard(
-                                    name: "Juanito David",
-                                    acctype: "Savings Account",
-                                    acno: "1234567899",
-                                    bal: "\$12,500")
-                                //   TopCard(name: "Adam Johnson", acno: "9874563210", bal: "\$18,000"),
-                                //   TopCard(name: "Ana Willson", acno: "5821479630", bal: "\$12,500"),
-                              ]
-                              // onPageChanged: (value) {
-                              //   setState(() => currentIndexPage = value);
-                              ,
+                                  name: args['name'],
+                                  acctype: "Savings Account",
+                                  acno: args['accnumber'].toString(),
+                                  bal: 'RM ' + args['bal'].toString(),
+                                )
+                              ],
                             ),
                           ),
                           Align(
                             alignment: Alignment.center,
-                            // child: DotsIndicator(
-                            //   dotsCount: 1,
-                            //   position: currentIndexPage.toDouble(),
-                            //   decorator: DotsDecorator(
-                            //     size: Size.square(8.0),
-                            //     activeSize: Size.square(8.0),
-                            //     color: Banking_view_color,
-                            //     activeColor: Banking_TextColorPrimary,
-                            //   ),
-                            // ),
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     Container(
-                          //       padding: EdgeInsets.only(top: 8, bottom: 8),
-                          //       decoration: boxDecorationWithRoundedCorners(
-                          //           backgroundColor: Banking_Primary,
-                          //           borderRadius: BorderRadius.circular(8)),
-                          //       child: Row(
-                          //         mainAxisAlignment: MainAxisAlignment.center,
-                          //         children: [
-                          //           Icon(Icons.payment,
-                          //               color: Banking_TextColorWhite,
-                          //               size: 24),
-                          //           10.width,
-                          //           Text('Payment',
-                          //               style: primaryTextStyle(
-                          //                   size: 16,
-                          //                   color: Banking_TextColorWhite)),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //     10.width,
-                          //     Container(
-                          //       padding: EdgeInsets.only(top: 8, bottom: 8),
-                          //       decoration: boxDecorationWithRoundedCorners(
-                          //           backgroundColor: Banking_Primary,
-                          //           borderRadius: BorderRadius.circular(8)),
-                          //       child: Row(
-                          //         mainAxisAlignment: MainAxisAlignment.center,
-                          //         children: [
-                          //           SvgPicture.asset(Banking_ic_Transfer,
-                          //               color: Banking_TextColorWhite),
-                          //           10.width,
-                          //           Text('Transfer',
-                          //               style: primaryTextStyle(
-                          //                   size: 16,
-                          //                   color: Banking_TextColorWhite)),
-                          //         ],
-                          //       ),
-                          //     ).expand(),
-                          //   ],
-                          // ).paddingAll(16)
                         ],
                       ),
                     )

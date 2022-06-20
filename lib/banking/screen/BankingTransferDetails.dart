@@ -1,6 +1,7 @@
 import 'package:bankingapp/banking/screen/BankingTransferToAccount.dart';
 import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -19,6 +20,24 @@ class BankingTransferDetails extends StatefulWidget {
 }
 
 class _BankingTransferDetailsState extends State<BankingTransferDetails> {
+  final userController = TextEditingController();
+  final accnumController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+
+    init();
+  }
+
+  Future init() async {
+    final name = await UserSecureStorage.getName() ?? '';
+    final accnum = await UserSecureStorage.getAccNum() ?? '';
+    setState(() {
+      this.userController.text = name;
+      this.accnumController.text = accnum;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // final bank = ModalRoute.of(context)!.settings.arguments as Banks;
@@ -78,10 +97,30 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                       Icons.wallet_rounded,
                                       size: 50,
                                     ),
-                                    Text(
-                                      'aa',
-                                      style: TextStyle(
-                                          fontWeight: fontWeightBoldGlobal),
+                                    Container(
+                                      height: 20,
+                                      alignment: Alignment.center,
+                                      child: TextField(
+                                        textAlign: TextAlign.center,
+                                        controller: accnumController,
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none),
+                                        style: TextStyle(
+                                            fontWeight: fontWeightBoldGlobal),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 30,
+                                      child: TextField(
+                                        textAlign: TextAlign.center,
+                                        controller: userController,
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none),
+                                        style: TextStyle(
+                                            fontWeight: fontWeightBoldGlobal),
+                                      ),
                                     )
                                   ],
                                 ),

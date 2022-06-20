@@ -19,6 +19,7 @@ import 'package:bankingapp/banking/utils/BankingWidget.dart';
 class ScreenArguments {
   final String accName;
   final int accNumber;
+  // final Map userAcc;
 
   ScreenArguments(this.accName, this.accNumber);
 }
@@ -105,6 +106,7 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
 
   @override
   Widget build(BuildContext context) {
+    // final userAcc = ModalRoute.of(context)!.settings.arguments as Map;
     final bank = ModalRoute.of(context)!.settings.arguments as Banks;
     return Scaffold(
       backgroundColor: Banking_app_Background,

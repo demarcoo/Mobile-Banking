@@ -12,6 +12,7 @@ class User {
   late String? accNum;
   late String? phone;
   late String? bank;
+  late List? details;
 
   User({
     this.name,
