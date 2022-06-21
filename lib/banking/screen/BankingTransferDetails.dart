@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/API/local_auth_api.dart';
@@ -22,6 +23,8 @@ class BankingTransferDetails extends StatefulWidget {
 class _BankingTransferDetailsState extends State<BankingTransferDetails> {
   final userController = TextEditingController();
   final accnumController = TextEditingController();
+  final amountController = TextEditingController();
+  late double? bal;
   @override
   void initState() {
     super.initState();
@@ -32,9 +35,11 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
   Future init() async {
     final name = await UserSecureStorage.getName() ?? '';
     final accnum = await UserSecureStorage.getAccNum() ?? '';
+    final bal = await UserSecureStorage.getBal() ?? '';
     setState(() {
       this.userController.text = name;
       this.accnumController.text = accnum;
+      this.bal = double.parse(bal);
     });
   }
 
@@ -179,33 +184,60 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                 flex: 6,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 370,
-                      child: TextField(
-                        readOnly: false,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(12),
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                          hintText: 'Amount',
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Banking_Primary),
+                    Center(
+                      child: Container(
+                        width: 250,
+                        child: TextField(
+                          cursorColor: Banking_Primary,
+                          cursorHeight: 16,
+                          controller: amountController,
+                          style: TextStyle(fontSize: 17),
+                          readOnly: false,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(8),
+                            // FilteringTextInputFormatter.digitsOnly,
+                            FilteringTextInputFormatter.allow(
+                                RegExp('[0-9.]+')),
+                          ],
+                          decoration: InputDecoration(
+                            prefixIcon: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(15, 15, 15, 17),
+                              child: Text(
+                                'RM',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                            hintText: 'Amount',
+                            alignLabelWithHint: true,
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Banking_Primary)),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Banking_Primary),
+                            ),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 50,
+                      height: 30,
                     ),
                     ElevatedButton.icon(
                       onPressed: () async {
                         final isAuthenticated =
                             await biomAuthentication.authenticate();
                         if (isAuthenticated == true) {
-                          print('you in!');
+                          if (bal! < double.parse(amountController.text)) {
+                            //print error msg here
+                            print('not enough balance!');
+                          } else {
+                            //push to transfer successful
+                            print('you in');
+                          }
                         }
                       },
                       icon: Icon(
