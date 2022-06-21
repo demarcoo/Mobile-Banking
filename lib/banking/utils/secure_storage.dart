@@ -26,6 +26,8 @@ class UserSecureStorage {
   static Future<String?> getUsername() async =>
       await _storage.read(key: _keyUsername);
   static Future<String?> getName() async => await _storage.read(key: _keyName);
+  static Future<String?> getBal() async =>
+      await _storage.read(key: _keyBalance);
   static Future<String?> getAccNum() async =>
       await _storage.read(key: _keyAccNum);
 }
