@@ -7,6 +7,7 @@ import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingStrings.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
 import 'package:bankingapp/banking/utils/secure_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -28,16 +29,15 @@ class _BankingSignInState extends State<BankingSignIn> {
   @override
   void initState() {
     super.initState();
-
     init();
   }
 
   Future init() async {
     final username = await UserSecureStorage.getUsername() ?? '';
-
     setState(() {
       this.usernameController.text = username;
     });
+    // print(usernameController.text);
   }
 
   Future<void> _showErrorDialog(BuildContext context) async {
@@ -72,146 +72,165 @@ class _BankingSignInState extends State<BankingSignIn> {
   @override
   Widget build(BuildContext context) {
     // FirebaseAuth _phoneAuth = FirebaseAuth.instance;
-    TextEditingController usernameController = TextEditingController();
+    // TextEditingController usernameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
+    return StreamBuilder<Object>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
+          return Scaffold(
+            body: Stack(
               children: [
-                Text(Banking_lbl_SignIn, style: boldTextStyle(size: 30)),
-                TextField(
-                  controller: usernameController,
-                  style: TextStyle(fontSize: 16),
-                  readOnly: false,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(20),
-                  ],
-                  decoration: InputDecoration(
-                    // errorText: _errorText,
-                    hintText: 'Username',
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Banking_Primary),
-                    ),
-                  ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(Banking_lbl_SignIn, style: boldTextStyle(size: 30)),
+                      TextField(
+                        controller: usernameController,
+                        style: TextStyle(fontSize: 16),
+                        readOnly: false,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(20),
+                        ],
+                        decoration: InputDecoration(
+                          // errorText: _errorText,
+                          hintText: 'Username',
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 15.0),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary),
+                          ),
+                        ),
+                      ),
+                      8.height,
+                      TextField(
+                        controller: passwordController,
+                        style: TextStyle(fontSize: 16),
+                        readOnly: false,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(20),
+                        ],
+                        decoration: InputDecoration(
+                          // errorText: _errorText,
+                          hintText: 'Password',
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 15.0),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary),
+                          ),
+                        ),
+                      ),
+                      16.height,
+                      BankingButton(
+                        textContent: Banking_lbl_SignIn,
+                        onPressed: () async {
+                          Map isLoggedin = await userAuth(
+                              usernameController.text, passwordController.text);
+                          // print(isLoggedin['name']);
+
+                          if (isLoggedin.isNotEmpty) {
+                            await UserSecureStorage.setUsername(
+                                usernameController.text);
+                            await UserSecureStorage.setName(isLoggedin['name']);
+                            await UserSecureStorage.setAccNum(
+                                isLoggedin['accnumber']);
+                            await UserSecureStorage.setBank(isLoggedin['bank']);
+                            await UserSecureStorage.setPhone(
+                                isLoggedin['phone']);
+                            await UserSecureStorage.setBalance(
+                                isLoggedin['bal']);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BankingDashboard(),
+                                  settings:
+                                      RouteSettings(arguments: isLoggedin)),
+                            );
+                          } else {
+                            _showErrorDialog(context);
+                            return;
+                          }
+                          // await FirebaseAuth.instance.verifyPhoneNumber(
+                          //   phoneNumber: '+15551234567',
+                          //   verificationCompleted:
+                          //       (PhoneAuthCredential credential) async {
+                          //     // ANDROID ONLY!
+
+                          //     // Sign the user in (or link) with the auto-generated credential
+                          //     await auth.signInWithCredential(credential);
+                          //   },
+                          //   verificationFailed: (FirebaseAuthException e) {
+                          //     if (e.code == 'invalid-phone-number') {
+                          //       print('The provided phone number is not valid.');
+                          //     }
+
+                          //     // Handle other errors
+                          //   },
+                          //   codeSent:
+                          //       (String verificationId, int? resendToken) async {
+                          //     // Update the UI - wait for the user to enter the SMS code
+                          //     String smsCode = 'xxxx';
+
+                          //     // Create a PhoneAuthCredential with the code
+                          //     PhoneAuthCredential credential =
+                          //         PhoneAuthProvider.credential(
+                          //             verificationId: verificationId,
+                          //             smsCode: smsCode);
+
+                          //     // Sign the user in (or link) with the credential
+                          //     await auth.signInWithCredential(credential);
+                          //   },
+                          //   codeAutoRetrievalTimeout: (String verificationId) {
+                          //     // Auto-resolution timed out...
+                          //   },
+                          // );
+                          // phoneAuthentication();
+                          // // BankingDashboard().launch(context, isNewTask: true);
+                        },
+                      ),
+                      16.height,
+                      Column(
+                        children: [
+                          Text(Banking_lbl_Login_with_FaceID,
+                                  style: primaryTextStyle(
+                                      size: 16,
+                                      color: Banking_TextColorSecondary))
+                              .onTap(() async {
+                            final isAuthenticated =
+                                await biomAuthentication.authenticate();
+                            if (isAuthenticated == true) {
+                              BankingDashboard()
+                                  .launch(context, isNewTask: true);
+                            }
+                          }),
+                          16.height,
+                          Image.asset(Banking_ic_face_id,
+                              color: Banking_Primary, height: 40, width: 40),
+                        ],
+                      ).center(),
+                    ],
+                  ).center(),
                 ),
-                8.height,
-                TextField(
-                  controller: passwordController,
-                  style: TextStyle(fontSize: 16),
-                  readOnly: false,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(20),
-                  ],
-                  decoration: InputDecoration(
-                    // errorText: _errorText,
-                    hintText: 'Password',
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Banking_Primary),
-                    ),
-                  ),
-                ),
-                16.height,
-                BankingButton(
-                  textContent: Banking_lbl_SignIn,
-                  onPressed: () async {
-                    Map isLoggedin = await userAuth(
-                        usernameController.text, passwordController.text);
-                    print(isLoggedin['name']);
-
-                    if (isLoggedin.isNotEmpty) {
-                      await UserSecureStorage.setUsername(
-                          usernameController.text);
-                      await UserSecureStorage.setName(isLoggedin['name']);
-                      await UserSecureStorage.setAccNum(
-                          isLoggedin['accnumber']);
-                      await UserSecureStorage.setBank(isLoggedin['bank']);
-                      await UserSecureStorage.setPhone(isLoggedin['phone']);
-                      await UserSecureStorage.setBalance(isLoggedin['bal']);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BankingDashboard(),
-                            settings: RouteSettings(arguments: isLoggedin)),
-                      );
-                    } else {
-                      _showErrorDialog(context);
-                      return;
-                    }
-                    // await FirebaseAuth.instance.verifyPhoneNumber(
-                    //   phoneNumber: '+15551234567',
-                    //   verificationCompleted:
-                    //       (PhoneAuthCredential credential) async {
-                    //     // ANDROID ONLY!
-
-                    //     // Sign the user in (or link) with the auto-generated credential
-                    //     await auth.signInWithCredential(credential);
-                    //   },
-                    //   verificationFailed: (FirebaseAuthException e) {
-                    //     if (e.code == 'invalid-phone-number') {
-                    //       print('The provided phone number is not valid.');
-                    //     }
-
-                    //     // Handle other errors
-                    //   },
-                    //   codeSent:
-                    //       (String verificationId, int? resendToken) async {
-                    //     // Update the UI - wait for the user to enter the SMS code
-                    //     String smsCode = 'xxxx';
-
-                    //     // Create a PhoneAuthCredential with the code
-                    //     PhoneAuthCredential credential =
-                    //         PhoneAuthProvider.credential(
-                    //             verificationId: verificationId,
-                    //             smsCode: smsCode);
-
-                    //     // Sign the user in (or link) with the credential
-                    //     await auth.signInWithCredential(credential);
-                    //   },
-                    //   codeAutoRetrievalTimeout: (String verificationId) {
-                    //     // Auto-resolution timed out...
-                    //   },
-                    // );
-                    // phoneAuthentication();
-                    // // BankingDashboard().launch(context, isNewTask: true);
-                  },
-                ),
-                16.height,
-                Column(
-                  children: [
-                    Text(Banking_lbl_Login_with_FaceID,
-                            style: primaryTextStyle(
-                                size: 16, color: Banking_TextColorSecondary))
-                        .onTap(() async {
-                      final isAuthenticated =
-                          await biomAuthentication.authenticate();
-                      if (isAuthenticated == true) {
-                        BankingDashboard().launch(context, isNewTask: true);
-                      }
-                    }),
-                    16.height,
-                    Image.asset(Banking_ic_face_id,
-                        color: Banking_Primary, height: 40, width: 40),
-                  ],
-                ).center(),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(Banking_lbl_app_Name.toUpperCase(),
+                      style: primaryTextStyle(
+                          size: 16, color: Banking_TextColorSecondary)),
+                ).paddingBottom(16),
               ],
-            ).center(),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Text(Banking_lbl_app_Name.toUpperCase(),
-                style: primaryTextStyle(
-                    size: 16, color: Banking_TextColorSecondary)),
-          ).paddingBottom(16),
-        ],
-      ),
-    );
+            ),
+          );
+        });
   }
 }

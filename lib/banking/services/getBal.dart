@@ -4,10 +4,8 @@ import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-Future<dynamic> getBankAcc(input, bank) async {
-  late var accName;
-  late dynamic accNumber;
-  late dynamic accDetails;
+Future<dynamic> getBal(input, bank) async {
+  late double accBal;
 
   await FirebaseFirestore.instance
       .collection('users')
@@ -17,14 +15,12 @@ Future<dynamic> getBankAcc(input, bank) async {
       .then(
     (QuerySnapshot querySnapshot) async {
       if (querySnapshot.docs.isEmpty) {
-        accName = '';
         return;
       } else {
-        // print(querySnapshot.docs.first['Name']);
-        accName = await querySnapshot.docs.first['Name'];
-        accNumber = await querySnapshot.docs.first['Account Number'].toString();
+        print(querySnapshot.docs.first['Name']);
+        accBal = await querySnapshot.docs.first['Balance'];
       }
     },
   );
-  return accName;
+  return accBal;
 }

@@ -1,12 +1,15 @@
 import 'package:bankingapp/banking/model/BankingModel.dart';
 import 'package:bankingapp/banking/services/classes.dart';
+import 'package:bankingapp/banking/services/getBal.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/banking/utils/BankingDataGenerator.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
 import 'package:bankingapp/banking/utils/secure_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -24,6 +27,7 @@ class BankingHome1 extends StatefulWidget {
 class BankingHome1State extends State<BankingHome1> {
   int currentIndexPage = 0;
   int? pageLength;
+  double currentBal = 0;
 
   late List isLoggedin;
   late List<BankingHomeModel> mList1;
@@ -40,12 +44,47 @@ class BankingHome1State extends State<BankingHome1> {
     mList2 = bankingHomeList2();
   }
 
-  Future init() async {}
+  Future init() async {
+    final name = await UserSecureStorage.getName() ?? '';
+    final accnum = await UserSecureStorage.getAccNum() ?? '';
+    // final currentBal = await FirebaseFirestore.instance
+    //     .collection('users')
+    //     .where('Account Number', isEqualTo: accnum)
+    //     .where('Name', isEqualTo: name)
+    //     .get()
+    //     .then(
+    //   (QuerySnapshot querySnapshot) async {
+    //     return querySnapshot.docs.first['Balance'];
+    //   },
+    // );
+
+    setState(() {
+      TopCard(
+        name: name,
+        acctype: 'Savings Account',
+        acno: accnum,
+        bal: currentBal.toString(),
+      );
+    });
+
+    // currentBal = await FirebaseFirestore.instance.collection('users').where('Account Number', isEqualTo:  )
+  }
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
 
+    // return StreamBuilder<QuerySnapshot>(
+    //     stream: FirebaseFirestore.instance.collection('users').snapshots(),
+    //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       }
+    //       if (snapshot.hasError) {
+    //         return Text('Something went wrong');
+    //       }
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -109,19 +148,40 @@ class BankingHome1State extends State<BankingHome1> {
                           boxShadow: defaultBoxShadow()),
                       child: Column(
                         children: [
-                          Container(
-                            height: 250,
-                            child: PageView(
-                              children: [
-                                TopCard(
-                                  name: args['name'],
-                                  acctype: "Savings Account",
-                                  acno: args['accnumber'].toString(),
-                                  bal: 'RM ' + args['bal'].toString(),
-                                )
-                              ],
-                            ),
-                          ),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .where('Account Number',
+                                      isEqualTo: args['accnumber'])
+                                  .where('Name', isEqualTo: args['name'])
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else {
+                                  currentBal =
+                                      snapshot.data?.docs.first['Balance'];
+                                }
+                                print(currentBal);
+                                // <DocumentSnapshot> balance = snapshot.dat;
+                                return Container(
+                                  height: 250,
+                                  child: PageView(
+                                    children: [
+                                      TopCard(
+                                        name: args['name'],
+                                        acctype: "Savings Account",
+                                        acno: args['accnumber'].toString(),
+                                        bal: 'RM ' + currentBal.toString(),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
                           Align(
                             alignment: Alignment.center,
                           ),

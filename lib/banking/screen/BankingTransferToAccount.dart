@@ -1,5 +1,6 @@
 import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
 import 'package:bankingapp/banking/services/database.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -17,11 +18,13 @@ import 'package:bankingapp/banking/services/GetBankAcc.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
 
 class ScreenArguments {
+  final String recName;
+  final int recAccNum;
   final String accName;
   final int accNumber;
   // final Map userAcc;
 
-  ScreenArguments(this.accName, this.accNumber);
+  ScreenArguments(this.recName, this.recAccNum, this.accName, this.accNumber);
 }
 
 class SearchBankAccount extends StatefulWidget {
@@ -199,10 +202,17 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                     Container(
                       child: ElevatedButton.icon(
                           onPressed: () async {
+                            final recAccNum =
+                                await int.parse(textFieldController.text);
+                            final accName =
+                                await UserSecureStorage.getName() ?? '';
+                            final accNum =
+                                await UserSecureStorage.getAccNum() ?? '';
+                            // print(accNum + 'aaaa');
                             if (textFieldController.text.length != 0) {
-                              final accName = await getBankAcc(
+                              final recName = await getBankAcc(
                                   textFieldController.text, bank.name);
-                              if (accName != '') {
+                              if (recName != '') {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -210,9 +220,10 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                                         BankingTransferDetails(),
                                     settings: RouteSettings(
                                       arguments: ScreenArguments(
-                                        accName,
-                                        int.parse(textFieldController.text),
-                                      ),
+                                          recName,
+                                          recAccNum,
+                                          accName,
+                                          int.parse(accNum)),
                                     ),
                                   ),
                                 );

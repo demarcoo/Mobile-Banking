@@ -232,8 +232,13 @@ dialogContent(BuildContext context) {
               Text("Logout",
                       style: primaryTextStyle(size: 18, color: Banking_Primary))
                   .onTap(() {
-                BankingSignIn().launch(context, isNewTask: true);
                 finish(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BankingSignIn(),
+                  ),
+                );
               }).paddingLeft(16)
             ],
           ),
