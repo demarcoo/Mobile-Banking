@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ffi';
 
+import 'package:bankingapp/banking/screen/BankingTransferResult.dart';
 import 'package:bankingapp/banking/screen/BankingTransferToAccount.dart';
 import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
@@ -14,6 +16,19 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/API/local_auth_api.dart';
+
+class TransferArguments {
+  final String recName;
+  final int recAccNum;
+  final String recBank;
+  final double transferAmount;
+  // final String accName;
+  // final int accNumber;
+  // // final Map userAcc;
+
+  TransferArguments(
+      this.recName, this.recAccNum, this.recBank, this.transferAmount);
+}
 
 class BankingTransferDetails extends StatefulWidget {
   const BankingTransferDetails({
@@ -44,9 +59,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
 
   @override
   Widget build(BuildContext context) {
-    // final bank = ModalRoute.of(context)!.settings.arguments as Banks;
     final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
-    // print(this.accnumController.text);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Banking_app_Background,
@@ -133,7 +146,8 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                             ),
                                           ),
                                           Container(
-                                            height: 30,
+                                            padding: EdgeInsets.only(top: 30),
+                                            height: 20,
                                             child: TextField(
                                               textAlign: TextAlign.center,
                                               controller: userController,
@@ -177,19 +191,28 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                             Icons.account_balance_wallet,
                                             size: 50,
                                           ),
-                                          Text(
-                                            args.recAccNum.toString(),
-                                            style: TextStyle(
-                                                fontWeight:
-                                                    fontWeightBoldGlobal,
-                                                fontSize: 16),
+                                          Container(
+                                            height: 20,
+                                            child: Text(
+                                              args.recAccNum.toString(),
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                      fontWeightBoldGlobal,
+                                                  fontSize: 16),
+                                            ),
                                           ),
-                                          Text(
-                                            args.recName,
-                                            style: TextStyle(
-                                                fontWeight:
-                                                    fontWeightBoldGlobal,
-                                                fontSize: 15),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Container(
+                                            height: 20,
+                                            child: Text(
+                                              args.recName,
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                      fontWeightBoldGlobal,
+                                                  fontSize: 16),
+                                            ),
                                           )
                                         ],
                                       ),
@@ -252,19 +275,18 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           ),
                           ElevatedButton.icon(
                             onPressed: () async {
+                              final amountTransfer =
+                                  double.parse(amountController.text);
                               final isAuthenticated =
                                   await biomAuthentication.authenticate();
                               if (isAuthenticated == true) {
-                                print(accnumController.text);
-                                print(userController.text);
-
-                                if (currentBal <
-                                    double.parse(amountController.text)) {
+                                if (currentBal < amountTransfer) {
                                   //print error msg here
                                   print('not enough balance!');
                                 } else {
-                                  final newBal = await currentBal -
-                                      double.parse(amountController.text);
+                                  final newBal =
+                                      await currentBal - amountTransfer;
+
                                   print(newBal);
 
                                   final post = await FirebaseFirestore.instance
@@ -284,14 +306,20 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   var batch =
                                       FirebaseFirestore.instance.batch();
                                   batch.update(post, {'Balance': newBal});
-                                  batch.commit();
-                                  setState(() {});
+                                  await batch.commit();
 
-                                  //   // print(docUser);
-                                  //   //deduct money from database
-
-                                  //   //push to transfer successful
-
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TransferResult(),
+                                      settings: RouteSettings(
+                                          arguments: TransferArguments(
+                                              args.recName,
+                                              args.recAccNum,
+                                              args.recBank,
+                                              amountTransfer)),
+                                    ),
+                                  );
                                 }
                               }
                             },
@@ -304,9 +332,36 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                               style: TextStyle(color: Colors.black),
                             ),
                             style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ),
+                                ),
                                 backgroundColor:
                                     MaterialStateProperty.all(Banking_Primary)),
-                          )
+                          ),
+                          Text('Or'),
+                          ElevatedButton.icon(
+                              onPressed: () {},
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Banking_Primary),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ),
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.pin,
+                                color: Colors.black,
+                              ),
+                              label: Text(
+                                'Use OTP Instead',
+                                style: TextStyle(color: Colors.black),
+                              ))
                         ],
                       ),
                     )

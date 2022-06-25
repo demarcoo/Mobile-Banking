@@ -49,7 +49,7 @@ class _BankingTransferState extends State<BankingTransfer> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-    print(args['name']);
+    // print(args['name']);
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -66,7 +66,7 @@ class _BankingTransferState extends State<BankingTransfer> {
             return Text('Something went wrong');
           }
           currentBal = snapshot.data?.docs.first['Balance'];
-          print(currentBal);
+          // print(currentBal);
           return SafeArea(
             child: Scaffold(
               backgroundColor: Banking_app_Background,

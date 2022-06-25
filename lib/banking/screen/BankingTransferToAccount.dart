@@ -20,11 +20,13 @@ import 'package:bankingapp/banking/utils/BankingWidget.dart';
 class ScreenArguments {
   final String recName;
   final int recAccNum;
+  final String recBank;
   final String accName;
   final int accNumber;
   // final Map userAcc;
 
-  ScreenArguments(this.recName, this.recAccNum, this.accName, this.accNumber);
+  ScreenArguments(
+      this.recName, this.recAccNum, this.recBank, this.accName, this.accNumber);
 }
 
 class SearchBankAccount extends StatefulWidget {
@@ -222,6 +224,7 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                                       arguments: ScreenArguments(
                                           recName,
                                           recAccNum,
+                                          bank.name,
                                           accName,
                                           int.parse(accNum)),
                                     ),
