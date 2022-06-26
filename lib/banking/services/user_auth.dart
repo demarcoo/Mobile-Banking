@@ -68,7 +68,7 @@ Future<dynamic> userAuth(username, password) async {
     };
   }
 
-  print(toMap());
+  // print(toMap());
   return toMap();
 }
 // }

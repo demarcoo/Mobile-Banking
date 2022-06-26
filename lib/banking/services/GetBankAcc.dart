@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 Future<dynamic> getBankAcc(input, bank) async {
   late var accName;
+  late double accBal;
   late dynamic accNumber;
   late dynamic accDetails;
 
@@ -23,8 +24,13 @@ Future<dynamic> getBankAcc(input, bank) async {
         // print(querySnapshot.docs.first['Name']);
         accName = await querySnapshot.docs.first['Name'];
         accNumber = await querySnapshot.docs.first['Account Number'].toString();
+        accBal = await querySnapshot.docs.first['Balance'];
       }
     },
   );
-  return accName;
+  Map<String, dynamic> toMap() {
+    return {'name': accName, 'bal': accBal};
+  }
+
+  return toMap();
 }

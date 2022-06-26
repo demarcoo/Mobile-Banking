@@ -72,8 +72,9 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
               }
-              final double currentBal = (snapshot.data?.docs.first['Balance']);
-              print(currentBal);
+              final double userCurrentBal =
+                  (snapshot.data?.docs.first['Balance']);
+              print(userCurrentBal);
               return Container(
                 height: context.height(),
                 padding: EdgeInsets.all(16),
@@ -280,16 +281,19 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                               final isAuthenticated =
                                   await biomAuthentication.authenticate();
                               if (isAuthenticated == true) {
-                                if (currentBal < amountTransfer) {
+                                if (userCurrentBal < amountTransfer) {
                                   //print error msg here
                                   print('not enough balance!');
                                 } else {
-                                  final newBal =
-                                      await currentBal - amountTransfer;
+                                  // update user balance
 
-                                  print(newBal);
+                                  final userNewBal =
+                                      await userCurrentBal - amountTransfer;
 
-                                  final post = await FirebaseFirestore.instance
+                                  print(userNewBal);
+
+                                  final userPost = await FirebaseFirestore
+                                      .instance
                                       .collection('users')
                                       .where('Account Number',
                                           isEqualTo:
@@ -303,10 +307,37 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                       return querySnapshot.docs[0].reference;
                                     },
                                   );
-                                  var batch =
+                                  var userBatch =
                                       FirebaseFirestore.instance.batch();
-                                  batch.update(post, {'Balance': newBal});
-                                  await batch.commit();
+                                  userBatch.update(
+                                      userPost, {'Balance': userNewBal});
+                                  await userBatch.commit();
+
+                                  //update recipient balance
+
+                                  final recNewBal =
+                                      await args.recBal + amountTransfer;
+
+                                  // print(recNewBal);
+
+                                  final recPost = await FirebaseFirestore
+                                      .instance
+                                      .collection('users')
+                                      .where('Account Number',
+                                          isEqualTo: args.recAccNum)
+                                      .where('Name', isEqualTo: args.recName)
+                                      .limit(1)
+                                      .get()
+                                      .then(
+                                    (QuerySnapshot querySnapshot) async {
+                                      return querySnapshot.docs[0].reference;
+                                    },
+                                  );
+                                  var recBatch =
+                                      FirebaseFirestore.instance.batch();
+                                  recBatch
+                                      .update(recPost, {'Balance': recNewBal});
+                                  await recBatch.commit();
 
                                   Navigator.push(
                                     context,

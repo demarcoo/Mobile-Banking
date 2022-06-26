@@ -21,12 +21,13 @@ class ScreenArguments {
   final String recName;
   final int recAccNum;
   final String recBank;
+  final double recBal;
   final String accName;
   final int accNumber;
   // final Map userAcc;
 
-  ScreenArguments(
-      this.recName, this.recAccNum, this.recBank, this.accName, this.accNumber);
+  ScreenArguments(this.recName, this.recAccNum, this.recBank, this.recBal,
+      this.accName, this.accNumber);
 }
 
 class SearchBankAccount extends StatefulWidget {
@@ -212,9 +213,9 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                                 await UserSecureStorage.getAccNum() ?? '';
                             // print(accNum + 'aaaa');
                             if (textFieldController.text.length != 0) {
-                              final recName = await getBankAcc(
+                              final recDetails = await getBankAcc(
                                   textFieldController.text, bank.name);
-                              if (recName != '') {
+                              if (recDetails != null) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -222,9 +223,10 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                                         BankingTransferDetails(),
                                     settings: RouteSettings(
                                       arguments: ScreenArguments(
-                                          recName,
+                                          recDetails['name'],
                                           recAccNum,
                                           bank.name,
+                                          recDetails['bal'],
                                           accName,
                                           int.parse(accNum)),
                                     ),
