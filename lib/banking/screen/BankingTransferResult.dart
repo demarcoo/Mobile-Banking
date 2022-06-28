@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
 
 class TransferResult extends StatefulWidget {
   const TransferResult({Key? key}) : super(key: key);

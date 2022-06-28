@@ -4,7 +4,9 @@ import 'dart:ffi';
 import 'package:bankingapp/banking/screen/BankingTransferResult.dart';
 import 'package:bankingapp/banking/screen/BankingTransferToAccount.dart';
 import 'package:bankingapp/banking/services/classes.dart';
+import 'package:bankingapp/banking/services/phone_auth.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
+import 'package:bankingapp/banking/utils/BankingDataGenerator.dart';
 import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,15 +18,14 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/API/local_auth_api.dart';
+import 'package:intl/intl.dart';
+import 'package:bankingapp/banking/utils/BankingDataGenerator.dart';
 
 class TransferArguments {
   final String recName;
   final int recAccNum;
   final String recBank;
   final double transferAmount;
-  // final String accName;
-  // final int accNumber;
-  // // final Map userAcc;
 
   TransferArguments(
       this.recName, this.recAccNum, this.recBank, this.transferAmount);
@@ -42,6 +43,35 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
   final userController = TextEditingController();
   final accnumController = TextEditingController();
   final amountController = TextEditingController();
+
+  Future<void> _showEmptyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Invalid Input'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Please specify the amount to be transferred'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -276,6 +306,9 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           ),
                           ElevatedButton.icon(
                             onPressed: () async {
+                              if (amountController.text == '') {
+                                return _showEmptyDialog(context);
+                              }
                               final amountTransfer =
                                   double.parse(amountController.text);
                               final isAuthenticated =
@@ -318,8 +351,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   final recNewBal =
                                       await args.recBal + amountTransfer;
 
-                                  // print(recNewBal);
-
                                   final recPost = await FirebaseFirestore
                                       .instance
                                       .collection('users')
@@ -338,6 +369,22 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   recBatch
                                       .update(recPost, {'Balance': recNewBal});
                                   await recBatch.commit();
+
+                                  DateTime now = DateTime.now();
+                                  String formattedDate =
+                                      DateFormat('yyyy-MM-dd').format(now);
+                                  print(formattedDate);
+
+                                  //store transaction details
+
+                                  final transaction = (transactionDetails(
+                                      dateTime: formattedDate,
+                                      senderAcc: args.recAccNum,
+                                      amountTransferred: amountTransfer));
+
+                                  // print(transactionLogs[1]);
+
+                                  // print(transactionDet());
 
                                   Navigator.push(
                                     context,
@@ -360,7 +407,8 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                             ),
                             label: Text(
                               'Transfer',
-                              style: TextStyle(color: Colors.black),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18),
                             ),
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all<
@@ -374,25 +422,36 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           ),
                           Text('Or'),
                           ElevatedButton.icon(
-                              onPressed: () {},
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Banking_Primary),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                  ),
+                            onPressed: () async {
+                              if (amountController.text == '') {
+                                return _showEmptyDialog(context);
+                              }
+                              final phoneNum =
+                                  await UserSecureStorage.getPhone() ?? '';
+
+                              //push to phone auth screen
+                              phoneAuthentication.phoneAuth(context, phoneNum);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Banking_Primary),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
                                 ),
                               ),
-                              icon: Icon(
-                                Icons.pin,
-                                color: Colors.black,
-                              ),
-                              label: Text(
-                                'Use OTP Instead',
-                                style: TextStyle(color: Colors.black),
-                              ))
+                            ),
+                            icon: Icon(
+                              Icons.pin,
+                              color: Colors.black,
+                            ),
+                            label: Text(
+                              'Use OTP Instead',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18),
+                            ),
+                          )
                         ],
                       ),
                     )

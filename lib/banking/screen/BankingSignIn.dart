@@ -2,6 +2,7 @@ import 'package:bankingapp/API/local_auth_api.dart';
 import 'package:bankingapp/banking/screen/BankingDashboard.dart';
 import 'package:bankingapp/banking/screen/BankingForgotPassword.dart';
 import 'package:bankingapp/banking/screen/BankingHome1.dart';
+import 'package:bankingapp/banking/services/user_auth_nopass.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingStrings.dart';
@@ -25,6 +26,8 @@ class BankingSignIn extends StatefulWidget {
 
 class _BankingSignInState extends State<BankingSignIn> {
   final usernameController = TextEditingController();
+  bool _isReadOnly = false;
+  bool _isEnabled = true;
 
   @override
   void initState() {
@@ -34,9 +37,13 @@ class _BankingSignInState extends State<BankingSignIn> {
 
   Future init() async {
     final username = await UserSecureStorage.getUsername() ?? '';
-    setState(() {
-      this.usernameController.text = username;
-    });
+    if (username != '') {
+      setState(() {
+        this.usernameController.text = username;
+        _isEnabled = false;
+        _isReadOnly = true;
+      });
+    }
     // print(usernameController.text);
   }
 
@@ -99,7 +106,8 @@ class _BankingSignInState extends State<BankingSignIn> {
                       TextField(
                         controller: usernameController,
                         style: TextStyle(fontSize: 16),
-                        readOnly: false,
+                        readOnly: _isReadOnly,
+                        enabled: _isEnabled,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(20),
                         ],
@@ -161,42 +169,6 @@ class _BankingSignInState extends State<BankingSignIn> {
                             _showErrorDialog(context);
                             return;
                           }
-                          // await FirebaseAuth.instance.verifyPhoneNumber(
-                          //   phoneNumber: '+15551234567',
-                          //   verificationCompleted:
-                          //       (PhoneAuthCredential credential) async {
-                          //     // ANDROID ONLY!
-
-                          //     // Sign the user in (or link) with the auto-generated credential
-                          //     await auth.signInWithCredential(credential);
-                          //   },
-                          //   verificationFailed: (FirebaseAuthException e) {
-                          //     if (e.code == 'invalid-phone-number') {
-                          //       print('The provided phone number is not valid.');
-                          //     }
-
-                          //     // Handle other errors
-                          //   },
-                          //   codeSent:
-                          //       (String verificationId, int? resendToken) async {
-                          //     // Update the UI - wait for the user to enter the SMS code
-                          //     String smsCode = 'xxxx';
-
-                          //     // Create a PhoneAuthCredential with the code
-                          //     PhoneAuthCredential credential =
-                          //         PhoneAuthProvider.credential(
-                          //             verificationId: verificationId,
-                          //             smsCode: smsCode);
-
-                          //     // Sign the user in (or link) with the credential
-                          //     await auth.signInWithCredential(credential);
-                          //   },
-                          //   codeAutoRetrievalTimeout: (String verificationId) {
-                          //     // Auto-resolution timed out...
-                          //   },
-                          // );
-                          // phoneAuthentication();
-                          // // BankingDashboard().launch(context, isNewTask: true);
                         },
                       ),
                       16.height,
@@ -210,8 +182,31 @@ class _BankingSignInState extends State<BankingSignIn> {
                             final isAuthenticated =
                                 await biomAuthentication.authenticate();
                             if (isAuthenticated == true) {
-                              BankingDashboard()
-                                  .launch(context, isNewTask: true);
+                              Map isLoggedin =
+                                  await userAuthNoPass(usernameController.text);
+                              if (isLoggedin.isNotEmpty) {
+                                await UserSecureStorage.setUsername(
+                                    usernameController.text);
+                                await UserSecureStorage.setName(
+                                    isLoggedin['name']);
+                                await UserSecureStorage.setAccNum(
+                                    isLoggedin['accnumber']);
+                                await UserSecureStorage.setBank(
+                                    isLoggedin['bank']);
+                                await UserSecureStorage.setPhone(
+                                    isLoggedin['phone']);
+                                await UserSecureStorage.setBalance(
+                                    isLoggedin['bal']);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BankingDashboard(),
+                                      settings:
+                                          RouteSettings(arguments: isLoggedin)),
+                                );
+                              } else {
+                                return _showErrorDialog(context);
+                              }
                             }
                           }),
                           16.height,

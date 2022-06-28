@@ -1,4 +1,6 @@
 import 'package:bankingapp/banking/model/BankingModel.dart';
+import 'package:bankingapp/banking/screen/BankingTransactionHistory.dart';
+
 import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/services/getBal.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
@@ -16,6 +18,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/banking/screen/BankingHome1.dart';
+import 'package:bankingapp/banking/services/classes.dart';
 
 class BankingHome1 extends StatefulWidget {
   static String tag = '/BankingHome1';
@@ -32,6 +35,7 @@ class BankingHome1State extends State<BankingHome1> {
   late List isLoggedin;
   late List<BankingHomeModel> mList1;
   late List<BankingHomeModel2> mList2;
+  late List<transactionDetails> transactions;
 
   @override
   void initState() {
@@ -42,21 +46,12 @@ class BankingHome1State extends State<BankingHome1> {
     pageLength = 3;
     mList1 = bankingHomeList1();
     mList2 = bankingHomeList2();
+    transactions = transactionLogs();
   }
 
   Future init() async {
     final name = await UserSecureStorage.getName() ?? '';
     final accnum = await UserSecureStorage.getAccNum() ?? '';
-    // final currentBal = await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .where('Account Number', isEqualTo: accnum)
-    //     .where('Name', isEqualTo: name)
-    //     .get()
-    //     .then(
-    //   (QuerySnapshot querySnapshot) async {
-    //     return querySnapshot.docs.first['Balance'];
-    //   },
-    // );
 
     setState(() {
       TopCard(
@@ -73,18 +68,6 @@ class BankingHome1State extends State<BankingHome1> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // return StreamBuilder<QuerySnapshot>(
-    //     stream: FirebaseFirestore.instance.collection('users').snapshots(),
-    //     builder: (BuildContext context, AsyncSnapshot snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return Center(
-    //           child: CircularProgressIndicator(),
-    //         );
-    //       }
-    //       if (snapshot.hasError) {
-    //         return Text('Something went wrong');
-    //       }
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -177,6 +160,16 @@ class BankingHome1State extends State<BankingHome1> {
                                         acctype: "Savings Account",
                                         acno: args['accnumber'].toString(),
                                         bal: 'RM ' + currentBal.toString(),
+                                      ).onTap(
+                                        () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TransactionHistory(),
+                                            ),
+                                          );
+                                        },
                                       )
                                     ],
                                   ),
@@ -218,7 +211,7 @@ class BankingHome1State extends State<BankingHome1> {
                 ),
                 ListView.builder(
                   scrollDirection: Axis.vertical,
-                  itemCount: mList1.length,
+                  itemCount: transactions.length,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
@@ -235,13 +228,13 @@ class BankingHome1State extends State<BankingHome1> {
                           Icon(Icons.account_balance_wallet,
                               size: 30, color: mList1[index].color),
                           10.width,
-                          Text('${mList1[index].title}',
+                          Text('Transfer from ${transactions[index].senderAcc}',
                                   style: primaryTextStyle(
                                       size: 16,
                                       color: mList1[index].color,
                                       fontFamily: fontMedium))
                               .expand(),
-                          Text(mList1[index].bal!,
+                          Text(transactions[index].amountTransferred.toString(),
                               style: primaryTextStyle(
                                   color: mList1[index].color, size: 16)),
                         ],

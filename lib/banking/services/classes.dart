@@ -21,6 +21,17 @@ class User {
     this.bank,
   });
 }
+
+class transactionDetails {
+  String? dateTime;
+  int? senderAcc;
+  double? amountTransferred;
+
+  transactionDetails(
+      {required this.dateTime,
+      required this.senderAcc,
+      required this.amountTransferred});
+}
 // class BankAccount {
 //   String name;
 //   int accNumber;

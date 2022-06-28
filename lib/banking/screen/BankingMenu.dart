@@ -147,10 +147,7 @@ class _BankingMenuState extends State<BankingMenu> {
                     }),
                     bankingOption(Banking_ic_Call, Banking_lbl_Contact,
                             Banking_blueColor)
-                        .onTap(() {
-                      // PurchaseMoreScreen().launch(context);
-                      // BankingContact().launch(context);
-                    }),
+                        .onTap(() {}),
                     SizedBox(
                       height: spacing_middle,
                     ),
@@ -172,6 +169,14 @@ class _BankingMenuState extends State<BankingMenu> {
                         builder: (BuildContext context) => CustomDialog(),
                       );
                     }),
+                    bankingOption(Banking_ic_Logout, 'Remove Account',
+                            Banking_pinkColor)
+                        .onTap(() async {
+                      finish(context);
+                      setState(
+                        () {},
+                      );
+                    })
                   ],
                 ),
               ),

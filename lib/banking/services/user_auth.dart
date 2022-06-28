@@ -5,27 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:tuple/tuple.dart';
 
-//   factory User.fromFirestore(
-//     DocumentSnapshot<Map<String, dynamic>> snapshot,
-//     SnapshotOptions? options,
-//   ) {
-//     final data = snapshot.data();
-//     return User(
-//       name: data?['Name'],
-//       accNum: data?['Account No.'],
-//       phone: data?['Phone'],
-//       bank: data?['Bank'],
-//     );
-//   }
-//   Map<String, dynamic> toFirestore() {
-//     return {
-//       if (name != null) "Name": name,
-//       if (accNum != null) "Account No.": accNum,
-//       if (phone != null) "Phone": phone,
-//       if (bank != null) "Bank": bank,
-//     };
-//   }
-
 Future<dynamic> userAuth(username, password) async {
   late bool isLoggedin;
   late String name;
