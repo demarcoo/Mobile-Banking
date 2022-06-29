@@ -49,9 +49,10 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         elevation: 0,
         title: Text('Transaction History'),
       ),
-      body: Stack(children: [
-        Container(
-          child: PageView(
+      body: Stack(
+        children: [
+          Container(
+            child: PageView(
               scrollDirection: Axis.horizontal,
               children: [
                 StreamBuilder(
@@ -135,16 +136,16 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Text(
-                                'Cash Outflow',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: fontWeightBoldGlobal),
-                              ),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                            //   child: Text(
+                            //     'Cash Outflow',
+                            //     textAlign: TextAlign.start,
+                            //     style: TextStyle(
+                            //         fontSize: 26,
+                            //         fontWeight: fontWeightBoldGlobal),
+                            //   ),
+                            // ),
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 1, horizontal: 4),
@@ -172,25 +173,29 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                 )
               ],
               onPageChanged: (value) {
-                setState(() {
-                  currentIndexPage = value;
-                });
-              }),
-        ),
-        Positioned(
-          width: context.width(),
-          height: 50,
-          top: context.height() * 0.8,
-          child: Align(
-            alignment: Alignment.center,
-            child: DotsIndicator(
-                dotsCount: 2,
-                position: currentIndexPage.toDouble(),
-                decorator: DotsDecorator(
-                    color: Banking_view_color, activeColor: Banking_Primary)),
+                setState(
+                  () {
+                    currentIndexPage = value;
+                  },
+                );
+              },
+            ),
           ),
-        ),
-      ]),
+          Positioned(
+            width: context.width(),
+            height: 50,
+            top: context.height() * 0.8,
+            child: Align(
+              alignment: Alignment.center,
+              child: DotsIndicator(
+                  dotsCount: 2,
+                  position: currentIndexPage.toDouble(),
+                  decorator: DotsDecorator(
+                      color: Banking_view_color, activeColor: Banking_Primary)),
+            ),
+          ),
+        ],
+      ),
 
       //  StreamBuilder(
       //   stream: FirebaseFirestore.instance

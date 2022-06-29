@@ -165,7 +165,8 @@ class _BankingSignInState extends State<BankingSignIn> {
                                   settings:
                                       RouteSettings(arguments: isLoggedin)),
                             );
-                          } else {
+                          }
+                          if (isLoggedin.isEmpty) {
                             _showErrorDialog(context);
                             return;
                           }
@@ -204,7 +205,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                                       settings:
                                           RouteSettings(arguments: isLoggedin)),
                                 );
-                              } else {
+                              } else if (isLoggedin.isEmpty) {
                                 return _showErrorDialog(context);
                               }
                             }

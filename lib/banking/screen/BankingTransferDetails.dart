@@ -379,8 +379,18 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
 
                                   final transaction = (transactionDetails(
                                       dateTime: formattedDate,
-                                      senderAcc: args.recAccNum,
+                                      senderAcc: args.accNumber,
+                                      recipientAcc: args.recAccNum,
                                       amountTransferred: amountTransfer));
+
+                                  await FirebaseFirestore.instance
+                                      .collection('transactions')
+                                      .add({
+                                    'Amount': amountTransfer,
+                                    'Recipient': args.recAccNum,
+                                    'Sender': args.accNumber,
+                                    'Date': formattedDate
+                                  });
 
                                   // print(transactionLogs[1]);
 

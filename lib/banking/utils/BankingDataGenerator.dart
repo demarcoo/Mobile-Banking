@@ -297,7 +297,10 @@ List<transactionDetails> transactionLogs() {
   List<transactionDetails> transaction = [];
 
   var transaction1 = transactionDetails(
-      dateTime: '2022-06-01', senderAcc: 123123123123, amountTransferred: 50.0);
+      dateTime: '2022-06-01',
+      senderAcc: 123123123123,
+      recipientAcc: 114414111262,
+      amountTransferred: 50.0);
   transaction.add(transaction1);
   return transaction;
 }

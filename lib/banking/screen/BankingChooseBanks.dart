@@ -52,7 +52,7 @@ class _ChooseBankState extends State<ChooseBank> {
               Row(
                 children: [
                   Icon(
-                    Icons.arrow_back,
+                    Icons.chevron_left,
                     size: 30,
                   ).onTap(
                     () {

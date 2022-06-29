@@ -7,11 +7,12 @@ import 'package:tuple/tuple.dart';
 
 Future<dynamic> userAuth(username, password) async {
   late bool isLoggedin;
-  late String name;
-  late int accNum;
-  late String phone;
-  late String bank;
-  late double balance;
+  late String? name;
+  late int? accNum;
+  late String? phone;
+  late String? bank;
+  late double? balance;
+  late Map myMap;
   late List accInfo;
 
   await FirebaseFirestore.instance
@@ -23,8 +24,13 @@ Future<dynamic> userAuth(username, password) async {
     (QuerySnapshot querySnapshot) async {
       if (querySnapshot.docs.isEmpty) {
         isLoggedin = false;
-        accInfo = List.empty();
-        return;
+        myMap = <String, dynamic>{};
+        // final accMap = <String, dynamic>{};
+        // // name = '';
+        // accNum = 0;
+        // phone = '';
+        // bank = '';
+        // balance = 0;
       } else {
         isLoggedin = true;
         print(querySnapshot.docs.first['Name']);
@@ -33,21 +39,26 @@ Future<dynamic> userAuth(username, password) async {
         phone = await querySnapshot.docs.first['Phone'];
         bank = await querySnapshot.docs.first['Bank'];
         balance = await querySnapshot.docs.first['Balance'];
+        myMap = <String, dynamic>{
+          'name': name,
+          'accnumber': accNum,
+          'phone': phone,
+          'bank': bank,
+          'bal': balance
+        };
       }
     },
   );
-  // print(accInfo);
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'accnumber': accNum,
-      'phone': phone,
-      'bank': bank,
-      'bal': balance
-    };
-  }
+  // Map<String, dynamic> toMap() {
+  //   return {
+  //     'name': name,
+  //     'accnumber': accNum,
+  //     'phone': phone,
+  //     'bank': bank,
+  //     'bal': balance
+  //   };
+  // }
 
-  // print(toMap());
-  return toMap();
+  return myMap;
 }
 // }

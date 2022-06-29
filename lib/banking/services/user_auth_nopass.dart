@@ -7,11 +7,12 @@ import 'package:tuple/tuple.dart';
 
 Future<dynamic> userAuthNoPass(username) async {
   late bool isLoggedin;
-  late String name;
-  late int accNum;
-  late String phone;
-  late String bank;
-  late double balance;
+  String? name;
+  int? accNum;
+  String? phone;
+  String? bank;
+  double? balance;
+  late Map myMap;
   late List accInfo;
 
   await FirebaseFirestore.instance
@@ -22,8 +23,7 @@ Future<dynamic> userAuthNoPass(username) async {
     (QuerySnapshot querySnapshot) async {
       if (querySnapshot.docs.isEmpty) {
         isLoggedin = false;
-        accInfo = List.empty();
-        return;
+        myMap = <String, dynamic>{};
       } else {
         isLoggedin = true;
         print(querySnapshot.docs.first['Name']);
@@ -32,21 +32,18 @@ Future<dynamic> userAuthNoPass(username) async {
         phone = await querySnapshot.docs.first['Phone'];
         bank = await querySnapshot.docs.first['Bank'];
         balance = await querySnapshot.docs.first['Balance'];
+
+        myMap = await <String, dynamic>{
+          'name': name,
+          'accnumber': accNum,
+          'phone': phone,
+          'bank': bank,
+          'bal': balance
+        };
       }
     },
   );
-  // print(accInfo);
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'accnumber': accNum,
-      'phone': phone,
-      'bank': bank,
-      'bal': balance
-    };
-  }
 
-  // print(toMap());
-  return toMap();
+  return myMap;
 }
 // }

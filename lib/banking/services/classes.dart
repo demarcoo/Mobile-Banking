@@ -25,11 +25,13 @@ class User {
 class transactionDetails {
   String? dateTime;
   int? senderAcc;
+  int? recipientAcc;
   double? amountTransferred;
 
   transactionDetails(
       {required this.dateTime,
       required this.senderAcc,
+      required this.recipientAcc,
       required this.amountTransferred});
 }
 // class BankAccount {
