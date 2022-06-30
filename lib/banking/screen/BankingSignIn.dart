@@ -114,6 +114,8 @@ class _BankingSignInState extends State<BankingSignIn> {
                         decoration: InputDecoration(
                           // errorText: _errorText,
                           hintText: 'Username',
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Banking_Primary)),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 15.0),
                           focusedBorder: UnderlineInputBorder(
@@ -148,6 +150,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                           // print(isLoggedin['name']);
 
                           if (isLoggedin.isNotEmpty) {
+                            //set user info
                             await UserSecureStorage.setUsername(
                                 usernameController.text);
                             await UserSecureStorage.setName(isLoggedin['name']);
@@ -158,6 +161,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                                 isLoggedin['phone']);
                             await UserSecureStorage.setBalance(
                                 isLoggedin['bal']);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -165,6 +169,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                                   settings:
                                       RouteSettings(arguments: isLoggedin)),
                             );
+                            passwordController.clear();
                           }
                           if (isLoggedin.isEmpty) {
                             _showErrorDialog(context);

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class TransactionHistory extends StatefulWidget {
@@ -55,121 +56,146 @@ class _TransactionHistoryState extends State<TransactionHistory> {
             child: PageView(
               scrollDirection: Axis.horizontal,
               children: [
-                StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('transactions')
-                      .where('Recipient', isEqualTo: 123123123123)
-                      .snapshots(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
-                    if (!snapshot.hasData) {
-                      return Text('No transactions recorded');
-                    }
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      child: Text(
+                        'Cash Inflow',
+                        style: TextStyle(
+                            fontSize: 26, fontWeight: fontWeightBoldGlobal),
+                      ),
+                    ),
+                    Flexible(
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('transactions')
+                            .where('Recipient', isEqualTo: 123123123123)
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (!snapshot.hasData) {
+                            return Text('No transactions recorded');
+                          }
 
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        var sender = snapshot.data!.docs[index]['Sender'];
-                        var inAmount = snapshot.data!.docs[index]['Amount'];
-                        var inDate = snapshot.data!.docs[index]['Date'];
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              var sender = snapshot.data!.docs[index]['Sender'];
+                              var inAmount =
+                                  snapshot.data!.docs[index]['Amount'];
+                              var inDate = snapshot.data!.docs[index]['Date'];
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Text(
-                                'Cash Inflow',
-                                style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: fontWeightBoldGlobal),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 1, horizontal: 4),
-                              child: Card(
-                                child: ListTile(
-                                  title: Text(
-                                    'Transfer from ' + sender.toString(),
-                                    style: TextStyle(
-                                        fontWeight: fontWeightBoldGlobal),
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 1, horizontal: 4),
+                                    child: Card(
+                                      child: ListTile(
+                                        title: Text(
+                                          'Transfer from ' + sender.toString(),
+                                          style: TextStyle(
+                                              fontWeight: fontWeightBoldGlobal),
+                                        ),
+                                        trailing: Text(
+                                          '+RM ' + inAmount.toString(),
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.green[400]),
+                                        ),
+                                        subtitle: Text(inDate.toString()),
+                                      ),
+                                    ),
                                   ),
-                                  trailing: Text(
-                                    '+RM ' + inAmount.toString(),
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.green[400]),
-                                  ),
-                                  subtitle: Text(inDate.toString()),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('transactions')
-                      .where('Sender', isEqualTo: 123123123123)
-                      .snapshots(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-                    if (snapshot2.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
-                    if (!snapshot2.hasData) {
-                      return Text('No transactions recorded');
-                    }
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      child: Text(
+                        'Cash Outflow',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 26, fontWeight: fontWeightBoldGlobal),
+                      ),
+                    ),
+                    Flexible(
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('transactions')
+                            .where('Sender', isEqualTo: 123123123123)
+                            .orderBy('Date', descending: true)
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+                          if (snapshot2.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (!snapshot2.hasData) {
+                            return Text('No transactions recorded');
+                          }
 
-                    return ListView.builder(
-                      itemCount: snapshot2.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        var recipient =
-                            snapshot2.data!.docs[index]['Recipient'];
-                        var outAmount = snapshot2.data!.docs[index]['Amount'];
-                        var outDate = snapshot2.data!.docs[index]['Date'];
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Padding(
-                            //   padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                            //   child: Text(
-                            //     'Cash Outflow',
-                            //     textAlign: TextAlign.start,
-                            //     style: TextStyle(
-                            //         fontSize: 26,
-                            //         fontWeight: fontWeightBoldGlobal),
-                            //   ),
-                            // ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 1, horizontal: 4),
-                              child: Card(
-                                child: ListTile(
-                                  title: Text(
-                                    'Transfer to ' + recipient.toString(),
-                                    style: TextStyle(
-                                        fontWeight: fontWeightBoldGlobal),
+                          return ListView.builder(
+                            itemCount: snapshot2.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              var recipient =
+                                  snapshot2.data!.docs[index]['Recipient'];
+                              var outAmount =
+                                  snapshot2.data!.docs[index]['Amount'];
+                              var outDate = (snapshot2.data!.docs[index]['Date']
+                                      as Timestamp)
+                                  .toDate();
+                              String formattedDate =
+                                  DateFormat('dd MMM yyyy').format(outDate);
+//02 Feb 2022
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 1, horizontal: 4),
+                                    child: Card(
+                                      child: ListTile(
+                                        title: Text(
+                                          'Transfer to ' + recipient.toString(),
+                                          style: TextStyle(
+                                              fontWeight: fontWeightBoldGlobal),
+                                        ),
+                                        trailing: Text(
+                                          '- RM ' + outAmount.toString(),
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Banking_Primary),
+                                        ),
+                                        subtitle: Text(formattedDate),
+                                      ),
+                                    ),
                                   ),
-                                  trailing: Text(
-                                    '- RM ' + outAmount.toString(),
-                                    style: TextStyle(
-                                        fontSize: 18, color: Banking_Primary),
-                                  ),
-                                  subtitle: Text(outDate.toString()),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 )
               ],
               onPageChanged: (value) {

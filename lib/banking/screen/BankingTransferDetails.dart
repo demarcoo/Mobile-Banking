@@ -9,6 +9,7 @@ import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingDataGenerator.dart';
 import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -43,6 +44,9 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
   final userController = TextEditingController();
   final accnumController = TextEditingController();
   final amountController = TextEditingController();
+  final _otpcontroller = TextEditingController();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  bool? isValid = false;
 
   Future<void> _showEmptyDialog(BuildContext context) async {
     return showDialog<void>(
@@ -55,6 +59,34 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
             child: ListBody(
               children: const <Widget>[
                 Text('Please specify the amount to be transferred'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showInsufficientDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Invalid Amount'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Transaction failed due to insufficient balance'),
                 // Text('Please try again with the correct account number.'),
               ],
             ),
@@ -371,26 +403,22 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   await recBatch.commit();
 
                                   DateTime now = DateTime.now();
-                                  String formattedDate =
-                                      DateFormat('yyyy-MM-dd').format(now);
-                                  print(formattedDate);
+                                  //  formattedDate =
+                                  //     DateFormat('yyyy-MM-dd').format(now);
+                                  // print(formattedDate);
 
-                                  //store transaction details
-
-                                  final transaction = (transactionDetails(
-                                      dateTime: formattedDate,
-                                      senderAcc: args.accNumber,
-                                      recipientAcc: args.recAccNum,
-                                      amountTransferred: amountTransfer));
+                                  //store transaction detail
 
                                   await FirebaseFirestore.instance
                                       .collection('transactions')
-                                      .add({
-                                    'Amount': amountTransfer,
-                                    'Recipient': args.recAccNum,
-                                    'Sender': args.accNumber,
-                                    'Date': formattedDate
-                                  });
+                                      .add(
+                                    {
+                                      'Amount': amountTransfer,
+                                      'Recipient': args.recAccNum,
+                                      'Sender': args.accNumber,
+                                      'Date': now
+                                    },
+                                  );
 
                                   // print(transactionLogs[1]);
 
@@ -433,14 +461,286 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           Text('Or'),
                           ElevatedButton.icon(
                             onPressed: () async {
-                              if (amountController.text == '') {
-                                return _showEmptyDialog(context);
-                              }
                               final phoneNum =
                                   await UserSecureStorage.getPhone() ?? '';
 
-                              //push to phone auth screen
-                              phoneAuthentication.phoneAuth(context, phoneNum);
+                              final amountTransfer =
+                                  double.parse(amountController.text);
+                              if (amountController.text == '') {
+                                return _showEmptyDialog(context);
+                              }
+                              if (userCurrentBal < amountTransfer) {
+                                return _showInsufficientDialog(context);
+                              } else {
+                                //push to phone auth screen
+                                // isValid = await phoneAuthentication.phoneAuth(
+                                //     context, '+601136695023', this);
+                                await FirebaseAuth.instance.verifyPhoneNumber(
+                                    phoneNumber: '+601136695023',
+                                    verificationCompleted: (PhoneAuthCredential
+                                        credential) async {},
+                                    verificationFailed:
+                                        (FirebaseAuthException e) {
+                                      if (e.code == 'invalid-phone-number') {
+                                        print(
+                                            'The provided phone number is not valid.');
+                                      }
+                                      // Handle other errors
+                                    },
+                                    codeSent: (String verificationId,
+                                        int? resendToken) async {
+                                      // Update the UI - wait for the user to enter the SMS code
+                                      String smsCode = '';
+                                      // dialog
+                                      isValid = await showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text('Enter OTP Code'),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                TextField(
+                                                  controller: _otpcontroller,
+                                                )
+                                              ],
+                                            ),
+                                            actions: [
+                                              FloatingActionButton(
+                                                onPressed: () async {
+                                                  smsCode = _otpcontroller.text
+                                                      .trim();
+
+                                                  // Create a PhoneAuthCredential with the code
+                                                  PhoneAuthCredential
+                                                      credential =
+                                                      PhoneAuthProvider
+                                                          .credential(
+                                                              verificationId:
+                                                                  verificationId,
+                                                              smsCode: smsCode);
+
+                                                  // Sign the user in (or link) with the credential
+
+                                                  await auth
+                                                      .signInWithCredential(
+                                                          credential)
+                                                      .then((value) async {
+                                                    final userNewBal =
+                                                        await userCurrentBal -
+                                                            amountTransfer;
+
+                                                    print(userNewBal);
+
+                                                    final userPost =
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('users')
+                                                            .where(
+                                                                'Account Number',
+                                                                isEqualTo: int.parse(
+                                                                    accnumController
+                                                                        .text))
+                                                            .where('Name',
+                                                                isEqualTo:
+                                                                    userController
+                                                                        .text)
+                                                            .limit(1)
+                                                            .get()
+                                                            .then(
+                                                      (QuerySnapshot
+                                                          querySnapshot) async {
+                                                        return querySnapshot
+                                                            .docs[0].reference;
+                                                      },
+                                                    );
+                                                    var userBatch =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .batch();
+                                                    userBatch.update(
+                                                      userPost,
+                                                      {'Balance': userNewBal},
+                                                    );
+                                                    await userBatch.commit();
+
+                                                    //update recipient balance
+
+                                                    final recNewBal =
+                                                        await args.recBal +
+                                                            amountTransfer;
+
+                                                    final recPost =
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('users')
+                                                            .where(
+                                                                'Account Number',
+                                                                isEqualTo: args
+                                                                    .recAccNum)
+                                                            .where('Name',
+                                                                isEqualTo: args
+                                                                    .recName)
+                                                            .limit(1)
+                                                            .get()
+                                                            .then(
+                                                      (QuerySnapshot
+                                                          querySnapshot) async {
+                                                        return querySnapshot
+                                                            .docs[0].reference;
+                                                      },
+                                                    );
+                                                    var recBatch =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .batch();
+                                                    recBatch.update(recPost,
+                                                        {'Balance': recNewBal});
+                                                    await recBatch.commit();
+
+                                                    DateTime now =
+                                                        DateTime.now();
+                                                    String formattedDate =
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(now);
+                                                    print(formattedDate);
+
+                                                    //store transaction details
+
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection(
+                                                            'transactions')
+                                                        .add({
+                                                      'Amount': amountTransfer,
+                                                      'Recipient':
+                                                          args.recAccNum,
+                                                      'Sender': args.accNumber,
+                                                      'Date': formattedDate
+                                                    });
+                                                    finish(context);
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TransferResult(),
+                                                        settings: RouteSettings(
+                                                          arguments:
+                                                              TransferArguments(
+                                                                  args.recName,
+                                                                  args.recAccNum,
+                                                                  args.recBank,
+                                                                  amountTransfer),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).catchError((err) {
+                                                    print(err);
+                                                  });
+                                                },
+                                                child: Text('Done'),
+                                                backgroundColor:
+                                                    Banking_Primary,
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    codeAutoRetrievalTimeout:
+                                        (String verificationId) {
+                                      // Auto-resolution timed out...
+                                    });
+                              }
+                              // if (isValid == true) {
+                              //   if (userCurrentBal < amountTransfer) {
+                              //     //print error msg here
+                              //     print('not enough balance!');
+                              //   } else {
+                              //     // update user balance
+
+                              //     final userNewBal =
+                              //         await userCurrentBal - amountTransfer;
+
+                              //     print(userNewBal);
+
+                              //     final userPost = await FirebaseFirestore
+                              //         .instance
+                              //         .collection('users')
+                              //         .where('Account Number',
+                              //             isEqualTo:
+                              //                 int.parse(accnumController.text))
+                              //         .where('Name',
+                              //             isEqualTo: userController.text)
+                              //         .limit(1)
+                              //         .get()
+                              //         .then(
+                              //       (QuerySnapshot querySnapshot) async {
+                              //         return querySnapshot.docs[0].reference;
+                              //       },
+                              //     );
+                              //     var userBatch =
+                              //         FirebaseFirestore.instance.batch();
+                              //     userBatch.update(
+                              //         userPost, {'Balance': userNewBal});
+                              //     await userBatch.commit();
+
+                              //     //update recipient balance
+
+                              //     final recNewBal =
+                              //         await args.recBal + amountTransfer;
+
+                              //     final recPost = await FirebaseFirestore
+                              //         .instance
+                              //         .collection('users')
+                              //         .where('Account Number',
+                              //             isEqualTo: args.recAccNum)
+                              //         .where('Name', isEqualTo: args.recName)
+                              //         .limit(1)
+                              //         .get()
+                              //         .then(
+                              //       (QuerySnapshot querySnapshot) async {
+                              //         return querySnapshot.docs[0].reference;
+                              //       },
+                              //     );
+                              //     var recBatch =
+                              //         FirebaseFirestore.instance.batch();
+                              //     recBatch
+                              //         .update(recPost, {'Balance': recNewBal});
+                              //     await recBatch.commit();
+
+                              //     DateTime now = DateTime.now();
+                              //     String formattedDate =
+                              //         DateFormat('yyyy-MM-dd').format(now);
+                              //     print(formattedDate);
+
+                              //     //store transaction details
+
+                              //     await FirebaseFirestore.instance
+                              //         .collection('transactions')
+                              //         .add({
+                              //       'Amount': amountTransfer,
+                              //       'Recipient': args.recAccNum,
+                              //       'Sender': args.accNumber,
+                              //       'Date': formattedDate
+                              //     });
+
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (context) => TransferResult(),
+                              //         settings: RouteSettings(
+                              //           arguments: TransferArguments(
+                              //               args.recName,
+                              //               args.recAccNum,
+                              //               args.recBank,
+                              //               amountTransfer),
+                              //         ),
+                              //       ),
+                              //     );
+                              //   }
+                              // }
                             },
                             style: ButtonStyle(
                               backgroundColor:

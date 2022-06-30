@@ -49,7 +49,7 @@ class _BankingTransferState extends State<BankingTransfer> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-    // print(args['name']);
+
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')

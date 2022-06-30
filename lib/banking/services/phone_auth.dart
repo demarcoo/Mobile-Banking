@@ -1,21 +1,25 @@
+import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
+import 'package:bankingapp/banking/screen/BankingTransferResult.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/utils.dart';
 
 class phoneAuthentication {
-  static Future phoneAuth(BuildContext context, phoneNum) async {
-    print('aaa');
+  static Future phoneAuth(BuildContext context, phoneNum, details) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     final _otpcontroller = TextEditingController();
-
+    bool? isValid;
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNum,
-      timeout: Duration(seconds: 60),
+      timeout: Duration(seconds: 30),
       verificationCompleted: (PhoneAuthCredential credential) async {
         // ANDROID ONLY!
-        // print('success');
+        print('HELLOOOOOO');
         // Sign the user in (or link) with the auto-generated credential
-        await auth.signInWithCredential(credential);
+        // await auth.signInWithCredential(credential).then((value) {
+        //   return true;
+        // });
       },
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {
@@ -27,7 +31,7 @@ class phoneAuthentication {
         // Update the UI - wait for the user to enter the SMS code
         String smsCode = '';
         // dialog
-        showDialog(
+        isValid = await showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
@@ -51,8 +55,18 @@ class phoneAuthentication {
                         PhoneAuthProvider.credential(
                             verificationId: verificationId, smsCode: smsCode);
 
+                    print(credential.smsCode.toString());
+
                     // Sign the user in (or link) with the credential
-                    await auth.signInWithCredential(credential);
+
+                    await auth.signInWithCredential(credential).then(
+                      (value) {
+                        isValid = true;
+                        print(isValid);
+                      },
+                    ).catchError((err) {
+                      print(err);
+                    });
                   },
                   child: Text('Done'),
                   backgroundColor: Banking_Primary,

@@ -8,8 +8,11 @@ import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingStrings.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 
 class BankingMenu extends StatefulWidget {
   static var tag = "/BankingMenu";
@@ -19,6 +22,7 @@ class BankingMenu extends StatefulWidget {
 }
 
 class _BankingMenuState extends State<BankingMenu> {
+  // FlutterSecureStorage _storage = FlutterSecureStorage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,10 +176,12 @@ class _BankingMenuState extends State<BankingMenu> {
                     bankingOption(Banking_ic_Logout, 'Remove Account',
                             Banking_pinkColor)
                         .onTap(() async {
-                      finish(context);
                       setState(
-                        () {},
+                        () {
+                          UserSecureStorage.clearStorage();
+                        },
                       );
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     })
                   ],
                 ),

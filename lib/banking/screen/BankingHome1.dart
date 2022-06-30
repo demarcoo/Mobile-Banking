@@ -194,101 +194,104 @@ class BankingHome1State extends State<BankingHome1> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Recent Transaction",
-                        style: primaryTextStyle(
-                            size: 16,
-                            color: Banking_TextColorPrimary,
-                            fontFamily: fontRegular)),
-                    Text("22 Feb 2020",
-                        style: primaryTextStyle(
-                            size: 16,
-                            color: Banking_TextColorSecondary,
-                            fontFamily: fontRegular)),
-                  ],
-                ),
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: transactions.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.only(top: 8, bottom: 8),
-                      decoration: boxDecorationRoundedWithShadow(8,
-                          backgroundColor: Banking_whitePureColor,
-                          spreadRadius: 0,
-                          blurRadius: 0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(Icons.account_balance_wallet,
-                              size: 30, color: mList1[index].color),
-                          10.width,
-                          Text('Transfer from ${transactions[index].senderAcc}',
-                                  style: primaryTextStyle(
-                                      size: 16,
-                                      color: mList1[index].color,
-                                      fontFamily: fontMedium))
-                              .expand(),
-                          Text(transactions[index].amountTransferred.toString(),
-                              style: primaryTextStyle(
-                                  color: mList1[index].color, size: 16)),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                16.height,
-                Text("22 Feb 2020",
-                    style: primaryTextStyle(
-                        size: 16,
-                        color: Banking_TextColorSecondary,
-                        fontFamily: fontRegular)),
-                Divider(),
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: 15,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    BankingHomeModel2 data = mList2[index % mList2.length];
-                    return Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.only(top: 8, bottom: 8),
-                      decoration: boxDecorationRoundedWithShadow(8,
-                          backgroundColor: Banking_whitePureColor,
-                          spreadRadius: 0,
-                          blurRadius: 0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(data.icon!,
-                              height: 30,
-                              width: 30,
-                              color: index == 2
-                                  ? Banking_Primary
-                                  : Banking_Primary),
-                          10.width,
-                          Text(data.title!,
-                                  style: primaryTextStyle(
-                                      size: 16,
-                                      color: Banking_TextColorPrimary,
-                                      fontFamily: fontRegular))
-                              .expand(),
-                          Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(data.charge!,
-                                  style: primaryTextStyle(
-                                      color: data.color, size: 16)))
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                Container(
+                  child: Text('aaa'),
+                )
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Text("Recent Transaction",
+                //         style: primaryTextStyle(
+                //             size: 16,
+                //             color: Banking_TextColorPrimary,
+                //             fontFamily: fontRegular)),
+                //     Text("22 Feb 2020",
+                //         style: primaryTextStyle(
+                //             size: 16,
+                //             color: Banking_TextColorSecondary,
+                //             fontFamily: fontRegular)),
+                //   ],
+                // ),
+                // ListView.builder(
+                //   scrollDirection: Axis.vertical,
+                //   itemCount: transactions.length,
+                //   shrinkWrap: true,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   itemBuilder: (BuildContext context, int index) {
+                //     return Container(
+                //       padding: EdgeInsets.all(8),
+                //       margin: EdgeInsets.only(top: 8, bottom: 8),
+                //       decoration: boxDecorationRoundedWithShadow(8,
+                //           backgroundColor: Banking_whitePureColor,
+                //           spreadRadius: 0,
+                //           blurRadius: 0),
+                //       child: Row(
+                //         crossAxisAlignment: CrossAxisAlignment.center,
+                //         children: [
+                //           Icon(Icons.account_balance_wallet,
+                //               size: 30, color: mList1[index].color),
+                //           10.width,
+                //           Text('Transfer from ${transactions[index].senderAcc}',
+                //                   style: primaryTextStyle(
+                //                       size: 16,
+                //                       color: mList1[index].color,
+                //                       fontFamily: fontMedium))
+                //               .expand(),
+                //           Text(transactions[index].amountTransferred.toString(),
+                //               style: primaryTextStyle(
+                //                   color: mList1[index].color, size: 16)),
+                //         ],
+                //       ),
+                //     );
+                //   },
+                // ),
+                // 16.height,
+                // Text("22 Feb 2020",
+                //     style: primaryTextStyle(
+                //         size: 16,
+                //         color: Banking_TextColorSecondary,
+                //         fontFamily: fontRegular)),
+                // Divider(),
+                // ListView.builder(
+                //   scrollDirection: Axis.vertical,
+                //   itemCount: 15,
+                //   shrinkWrap: true,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   itemBuilder: (BuildContext context, int index) {
+                //     BankingHomeModel2 data = mList2[index % mList2.length];
+                //     return Container(
+                //       padding: EdgeInsets.all(8),
+                //       margin: EdgeInsets.only(top: 8, bottom: 8),
+                //       decoration: boxDecorationRoundedWithShadow(8,
+                //           backgroundColor: Banking_whitePureColor,
+                //           spreadRadius: 0,
+                //           blurRadius: 0),
+                //       child: Row(
+                //         crossAxisAlignment: CrossAxisAlignment.center,
+                //         children: [
+                //           Image.asset(data.icon!,
+                //               height: 30,
+                //               width: 30,
+                //               color: index == 2
+                //                   ? Banking_Primary
+                //                   : Banking_Primary),
+                //           10.width,
+                //           Text(data.title!,
+                //                   style: primaryTextStyle(
+                //                       size: 16,
+                //                       color: Banking_TextColorPrimary,
+                //                       fontFamily: fontRegular))
+                //               .expand(),
+                //           Align(
+                //               alignment: Alignment.centerRight,
+                //               child: Text(data.charge!,
+                //                   style: primaryTextStyle(
+                //                       color: data.color, size: 16)))
+                //         ],
+                //       ),
+                //     );
+                //   },
+                // ),
               ],
             ),
           ),

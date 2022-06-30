@@ -141,7 +141,7 @@ class _TransferResultState extends State<TransferResult> {
                             width: 120,
                             padding: EdgeInsets.only(top: 20),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 int count = 0;
                                 //pop 4 screens
                                 Navigator.popUntil(
