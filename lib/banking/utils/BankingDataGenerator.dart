@@ -92,62 +92,59 @@ List<BankingPaymentModel> bankingPaymentList() {
   List<BankingPaymentModel> list = [];
 
   var list1 = BankingPaymentModel(
-      title: "Payment Electricity",
+      title: "Electricity",
       img: Banking_ic_Electricity,
       color: Banking_Primary);
   list.add(list1);
 
-  var list2 =
-      BankingPaymentModel(title: "Payment Water", img: Banking_ic_WaterDrop);
+  var list2 = BankingPaymentModel(title: "Water", img: Banking_ic_WaterDrop);
   list.add(list2);
 
   var list3 = BankingPaymentModel(
-      title: "Payment Internet",
-      img: Banking_ic_Website,
-      color: Banking_blueColor);
+      title: "Internet", img: Banking_ic_Website, color: Banking_blueColor);
   list.add(list3);
 
-  var list4 = BankingPaymentModel(
-      title: "Mobile PrePaid", img: Banking_ic_Mobile, color: Banking_palColor);
-  list.add(list4);
+  // var list4 = BankingPaymentModel(
+  //     title: "Mobile PrePaid", img: Banking_ic_Mobile, color: Banking_palColor);
+  // list.add(list4);
 
-  var list5 = BankingPaymentModel(
-      title: "Pay Google Play",
-      img: Banking_ic_PlayStore,
-      color: Banking_greenLightColor);
-  list.add(list5);
+  // var list5 = BankingPaymentModel(
+  //     title: "Pay Google Play",
+  //     img: Banking_ic_PlayStore,
+  //     color: Banking_greenLightColor);
+  // list.add(list5);
 
-  var list6 = BankingPaymentModel(
-      title: "Pay iOS Store", img: Banking_ic_apple, color: Banking_greyColor);
-  list.add(list6);
+  // var list6 = BankingPaymentModel(
+  //     title: "Pay iOS Store", img: Banking_ic_apple, color: Banking_greyColor);
+  // list.add(list6);
 
-  var list7 = BankingPaymentModel(
-      title: "Buy Lottery tickets",
-      img: Banking_ic_Ticket,
-      color: Banking_RedColor);
-  list.add(list7);
+  // var list7 = BankingPaymentModel(
+  //     title: "Buy Lottery tickets",
+  //     img: Banking_ic_Ticket,
+  //     color: Banking_RedColor);
+  // list.add(list7);
 
-  var list8 = BankingPaymentModel(
-      title: "Buy train tickets",
-      img: Banking_ic_Train,
-      color: Banking_blueColor);
-  list.add(list8);
+  // var list8 = BankingPaymentModel(
+  //     title: "Buy train tickets",
+  //     img: Banking_ic_Train,
+  //     color: Banking_blueColor);
+  // list.add(list8);
 
-  var list9 = BankingPaymentModel(
-      title: "Buy air ticket", img: Banking_ic_plane, color: Banking_palColor);
-  list.add(list9);
+  // var list9 = BankingPaymentModel(
+  //     title: "Buy air ticket", img: Banking_ic_plane, color: Banking_palColor);
+  // list.add(list9);
 
-  var list10 = BankingPaymentModel(
-      title: "Shopping Online",
-      img: Banking_ic_ShoppingCart,
-      color: Banking_Primary);
-  list.add(list10);
+  // var list10 = BankingPaymentModel(
+  //     title: "Shopping Online",
+  //     img: Banking_ic_ShoppingCart,
+  //     color: Banking_Primary);
+  // list.add(list10);
 
-  var list11 = BankingPaymentModel(
-      title: "Booking Hotel",
-      img: Banking_ic_Hotel,
-      color: Banking_greenLightColor);
-  list.add(list11);
+  // var list11 = BankingPaymentModel(
+  //     title: "Booking Hotel",
+  //     img: Banking_ic_Hotel,
+  //     color: Banking_greenLightColor);
+  // list.add(list11);
 
   return list;
 }

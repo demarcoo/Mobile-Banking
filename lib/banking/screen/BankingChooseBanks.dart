@@ -22,6 +22,7 @@ class _ChooseBankState extends State<ChooseBank> {
     Banks(logo: 'RHB_logo.jpg', name: 'RHB Bank'),
     Banks(logo: 'publicbank_logo.png', name: 'Public Bank'),
     Banks(logo: 'CIMB_logo.png', name: 'CIMB'),
+    Banks(logo: 'Banking_app_logo.png', name: 'Capital Bank'),
   ];
 
   void updateBank(index) async {

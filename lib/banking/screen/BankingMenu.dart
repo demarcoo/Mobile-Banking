@@ -24,7 +24,18 @@ class BankingMenu extends StatefulWidget {
 class _BankingMenuState extends State<BankingMenu> {
   // FlutterSecureStorage _storage = FlutterSecureStorage();
   @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  Future init() async {
+    final name = await UserSecureStorage.getName() ?? '';
+    final accNum = await UserSecureStorage.getAccNum() ?? '';
+  }
+
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       backgroundColor: Banking_app_Background,
       body: Container(
@@ -54,17 +65,17 @@ class _BankingMenuState extends State<BankingMenu> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         5.height,
-                        Text("Laura Smith",
+                        Text(args['name'],
                             style: boldTextStyle(
                                 color: Banking_TextColorPrimary, size: 18)),
                         5.height,
-                        Text("123 456 789",
+                        Text(args['accnumber'].toString(),
                             style: primaryTextStyle(
                                 color: Banking_TextColorSecondary,
                                 size: 16,
                                 fontFamily: fontMedium)),
                         5.height,
-                        Text(Banking_lbl_app_Name,
+                        Text(args['bank'],
                             style: primaryTextStyle(
                                 color: Banking_TextColorSecondary,
                                 size: 16,
@@ -173,7 +184,7 @@ class _BankingMenuState extends State<BankingMenu> {
                         builder: (BuildContext context) => CustomDialog(),
                       );
                     }),
-                    bankingOption(Banking_ic_Logout, 'Remove Account',
+                    bankingOption(Banking_ic_Remove, 'Remove Account',
                             Banking_pinkColor)
                         .onTap(() async {
                       setState(
@@ -181,7 +192,13 @@ class _BankingMenuState extends State<BankingMenu> {
                           UserSecureStorage.clearStorage();
                         },
                       );
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      finish(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BankingSignIn(),
+                        ),
+                      );
                     })
                   ],
                 ),

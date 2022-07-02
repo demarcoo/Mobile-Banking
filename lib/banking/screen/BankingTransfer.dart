@@ -1,4 +1,5 @@
 import 'package:bankingapp/banking/screen/BankingChooseBanks.dart';
+import 'package:bankingapp/banking/screen/BankingTransactionHistory.dart';
 import 'package:bankingapp/banking/utils/BankingImages.dart';
 import 'package:bankingapp/banking/utils/BankingWidget.dart';
 import 'package:bankingapp/banking/utils/secure_storage.dart';
@@ -96,7 +97,14 @@ class _BankingTransferState extends State<BankingTransfer> {
                             acctype: 'Savings Account',
                             acno: args['accnumber'].toString(),
                             bal: 'RM' + currentBal.toString(),
-                          ),
+                          ).onTap(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TransactionHistory(),
+                              ),
+                            );
+                          }),
                         ),
                       ),
                       SizedBox(height: 100),

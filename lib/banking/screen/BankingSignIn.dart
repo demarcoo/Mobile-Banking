@@ -16,6 +16,7 @@ import 'package:bankingapp/banking/services/phone_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bankingapp/banking/services/user_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:io' show Platform;
 
 class BankingSignIn extends StatefulWidget {
   static var tag = "/BankingSignIn";
@@ -76,10 +77,36 @@ class _BankingSignInState extends State<BankingSignIn> {
     );
   }
 
+  Future<void> _showEmptyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Empty Input'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Please key in your username and password'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // FirebaseAuth _phoneAuth = FirebaseAuth.instance;
-    // TextEditingController usernameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     return StreamBuilder<Object>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
@@ -99,9 +126,22 @@ class _BankingSignInState extends State<BankingSignIn> {
                   padding: EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      SizedBox(
+                        height: 70,
+                      ),
+                      Center(
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage(Banking_app_logo),
+                          backgroundColor: Colors.transparent,
+                          radius: 100,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
                       Text(Banking_lbl_SignIn, style: boldTextStyle(size: 30)),
                       TextField(
                         controller: usernameController,
@@ -125,6 +165,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                       ),
                       8.height,
                       TextField(
+                        obscureText: true,
                         controller: passwordController,
                         style: TextStyle(fontSize: 16),
                         readOnly: false,
@@ -145,35 +186,42 @@ class _BankingSignInState extends State<BankingSignIn> {
                       BankingButton(
                         textContent: Banking_lbl_SignIn,
                         onPressed: () async {
-                          Map isLoggedin = await userAuth(
-                              usernameController.text, passwordController.text);
-                          // print(isLoggedin['name']);
+                          if (usernameController.text != '' &&
+                              passwordController.text != '') {
+                            Map isLoggedin = await userAuth(
+                                usernameController.text,
+                                passwordController.text);
+                            // print(isLoggedin['name']);
 
-                          if (isLoggedin.isNotEmpty) {
-                            //set user info
-                            await UserSecureStorage.setUsername(
-                                usernameController.text);
-                            await UserSecureStorage.setName(isLoggedin['name']);
-                            await UserSecureStorage.setAccNum(
-                                isLoggedin['accnumber']);
-                            await UserSecureStorage.setBank(isLoggedin['bank']);
-                            await UserSecureStorage.setPhone(
-                                isLoggedin['phone']);
-                            await UserSecureStorage.setBalance(
-                                isLoggedin['bal']);
+                            if (isLoggedin.isNotEmpty) {
+                              //set user info
+                              await UserSecureStorage.setUsername(
+                                  usernameController.text);
+                              await UserSecureStorage.setName(
+                                  isLoggedin['name']);
+                              await UserSecureStorage.setAccNum(
+                                  isLoggedin['accnumber']);
+                              await UserSecureStorage.setBank(
+                                  isLoggedin['bank']);
+                              await UserSecureStorage.setPhone(
+                                  isLoggedin['phone']);
+                              await UserSecureStorage.setBalance(
+                                  isLoggedin['bal']);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => BankingDashboard(),
-                                  settings:
-                                      RouteSettings(arguments: isLoggedin)),
-                            );
-                            passwordController.clear();
-                          }
-                          if (isLoggedin.isEmpty) {
-                            _showErrorDialog(context);
-                            return;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BankingDashboard(),
+                                    settings:
+                                        RouteSettings(arguments: isLoggedin)),
+                              );
+                              passwordController.clear();
+                            }
+                            if (isLoggedin.isEmpty) {
+                              return _showErrorDialog(context);
+                            }
+                          } else {
+                            return _showEmptyDialog(context);
                           }
                         },
                       ),
@@ -203,13 +251,16 @@ class _BankingSignInState extends State<BankingSignIn> {
                                     isLoggedin['phone']);
                                 await UserSecureStorage.setBalance(
                                     isLoggedin['bal']);
-                                Navigator.push(
+                                await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => BankingDashboard(),
                                       settings:
                                           RouteSettings(arguments: isLoggedin)),
                                 );
+                                //clear text field
+                                passwordController.clear();
+                                usernameController.clear();
                               } else if (isLoggedin.isEmpty) {
                                 return _showErrorDialog(context);
                               }
