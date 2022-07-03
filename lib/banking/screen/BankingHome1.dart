@@ -165,9 +165,11 @@ class BankingHome1State extends State<BankingHome1> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TransactionHistory(),
-                                            ),
+                                                builder: (context) =>
+                                                    TransactionHistory(),
+                                                settings: RouteSettings(
+                                                    arguments:
+                                                        args['accnumber'])),
                                           );
                                         },
                                       )

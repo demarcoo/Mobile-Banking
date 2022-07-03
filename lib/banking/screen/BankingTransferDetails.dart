@@ -416,14 +416,14 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                     {
                                       'Amount': amountTransfer,
                                       'Recipient': args.recAccNum,
+                                      'Recipient Name': args.recName,
                                       'Sender': args.accNumber,
+                                      'Sender Name': args.accName,
                                       'Date': now
                                     },
                                   );
 
-                                  // print(transactionLogs[1]);
-
-                                  // print(transactionDet());
+                                  await FirebaseAuth.instance.signOut();
 
                                   Navigator.push(
                                     context,

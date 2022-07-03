@@ -101,8 +101,9 @@ class _BankingTransferState extends State<BankingTransfer> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TransactionHistory(),
-                              ),
+                                  builder: (context) => TransactionHistory(),
+                                  settings: RouteSettings(
+                                      arguments: args['accnumber'])),
                             );
                           }),
                         ),

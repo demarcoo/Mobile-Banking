@@ -29,7 +29,8 @@ class _BankingSignInState extends State<BankingSignIn> {
   final usernameController = TextEditingController();
   bool _isReadOnly = false;
   bool _isEnabled = true;
-
+  final FocusNode _usernameFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -42,7 +43,7 @@ class _BankingSignInState extends State<BankingSignIn> {
       setState(() {
         this.usernameController.text = username;
         _isEnabled = false;
-        _isReadOnly = true;
+        // _isReadOnly = true;
       });
     }
     // print(usernameController.text);
@@ -120,6 +121,7 @@ class _BankingSignInState extends State<BankingSignIn> {
             return Text('Something went wrong');
           }
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             body: Stack(
               children: [
                 Container(
@@ -130,20 +132,29 @@ class _BankingSignInState extends State<BankingSignIn> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       SizedBox(
-                        height: 70,
+                        height: 30,
                       ),
                       Center(
-                        child: CircleAvatar(
-                          backgroundImage: AssetImage(Banking_app_logo),
-                          backgroundColor: Colors.transparent,
-                          radius: 100,
+                        child: Container(
+                          height: 200,
+                          width: 200,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(Banking_app_logo),
+                                  fit: BoxFit.cover)),
                         ),
                       ),
                       SizedBox(
-                        height: 50,
+                        height: 20,
                       ),
                       Text(Banking_lbl_SignIn, style: boldTextStyle(size: 30)),
                       TextField(
+                        showCursor: true,
+                        focusNode: _usernameFocus,
+                        enableInteractiveSelection: false,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () =>
+                            FocusScope.of(context).requestFocus(_usernameFocus),
                         controller: usernameController,
                         style: TextStyle(fontSize: 16),
                         readOnly: _isReadOnly,
@@ -154,8 +165,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                         decoration: InputDecoration(
                           // errorText: _errorText,
                           hintText: 'Username',
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Banking_Primary)),
+
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 15.0),
                           focusedBorder: UnderlineInputBorder(
@@ -165,6 +175,10 @@ class _BankingSignInState extends State<BankingSignIn> {
                       ),
                       8.height,
                       TextField(
+                        focusNode: _passwordFocus,
+                        enableInteractiveSelection: false,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => _passwordFocus.unfocus(),
                         obscureText: true,
                         controller: passwordController,
                         style: TextStyle(fontSize: 16),
@@ -208,7 +222,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                               await UserSecureStorage.setBalance(
                                   isLoggedin['bal']);
 
-                              Navigator.push(
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => BankingDashboard(),
@@ -233,6 +247,11 @@ class _BankingSignInState extends State<BankingSignIn> {
                                       size: 16,
                                       color: Banking_TextColorSecondary))
                               .onTap(() async {
+                            final name =
+                                await UserSecureStorage.getName() ?? '';
+                            if (name == '') {
+                              return _showEmptyDialog(context);
+                            }
                             final isAuthenticated =
                                 await biomAuthentication.authenticate();
                             if (isAuthenticated == true) {

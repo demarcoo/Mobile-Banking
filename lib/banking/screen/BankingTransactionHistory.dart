@@ -1,4 +1,5 @@
 import 'package:bankingapp/banking/utils/BankingColors.dart';
+import 'package:bankingapp/banking/utils/secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
@@ -26,21 +27,14 @@ class _TransactionHistoryState extends State<TransactionHistory> {
     init();
   }
 
-  void init() async {
-    final inTransactionDoc = await FirebaseFirestore.instance
-        .collection('transactions')
-        .where('Recipient', isEqualTo: 123123123123)
-        .snapshots();
-
-    print(inTransactionDoc.length);
-    final outTransactionDoc = await FirebaseFirestore.instance
-        .collection('transactions')
-        .where('Sender', isEqualTo: 123123123123)
-        .snapshots();
+  Future init() async {
+    final accnum = await UserSecureStorage.getAccNum() ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
+    //get user accnum from prev screen
+    final args = ModalRoute.of(context)!.settings.arguments as int;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Banking_Primary,
@@ -71,7 +65,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                       child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('transactions')
-                            .where('Recipient', isEqualTo: 123123123123)
+                            .where('Recipient', isEqualTo: args)
+                            .orderBy('Date', descending: true)
                             .snapshots(),
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -86,11 +81,17 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                           return ListView.builder(
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
-                              var sender = snapshot.data!.docs[index]['Sender'];
+                              var senderAcc =
+                                  snapshot.data!.docs[index]['Sender'];
+                              var senderName =
+                                  snapshot.data!.docs[index]['Sender Name'];
                               var inAmount =
                                   snapshot.data!.docs[index]['Amount'];
-                              var inDate = snapshot.data!.docs[index]['Date'];
-
+                              var inDate = (snapshot.data!.docs[index]['Date']
+                                      as Timestamp)
+                                  .toDate();
+                              String formattedDate =
+                                  DateFormat('dd MMM yyyy').format(inDate);
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -99,18 +100,21 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                                         vertical: 1, horizontal: 4),
                                     child: Card(
                                       child: ListTile(
-                                        title: Text(
-                                          'Transfer from ' + sender.toString(),
-                                          style: TextStyle(
-                                              fontWeight: fontWeightBoldGlobal),
-                                        ),
+                                        title: (senderAcc.runtimeType == int)
+                                            ? Text(
+                                                'Transfer from ' + senderName,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        fontWeightBoldGlobal),
+                                              )
+                                            : SizedBox.shrink(),
                                         trailing: Text(
                                           '+RM ' + inAmount.toString(),
                                           style: TextStyle(
                                               fontSize: 18,
                                               color: Colors.green[400]),
                                         ),
-                                        subtitle: Text(inDate.toString()),
+                                        subtitle: Text(formattedDate),
                                       ),
                                     ),
                                   ),
@@ -139,7 +143,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                       child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('transactions')
-                            .where('Sender', isEqualTo: 123123123123)
+                            .where('Sender', isEqualTo: args)
                             .orderBy('Date', descending: true)
                             .snapshots(),
                         builder:
@@ -157,6 +161,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                             itemBuilder: (context, index) {
                               var recipient =
                                   snapshot2.data!.docs[index]['Recipient'];
+                              var recName =
+                                  snapshot2.data!.docs[index]['Recipient Name'];
                               var outAmount =
                                   snapshot2.data!.docs[index]['Amount'];
                               var outDate = (snapshot2.data!.docs[index]['Date']
@@ -173,11 +179,19 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                                         vertical: 1, horizontal: 4),
                                     child: Card(
                                       child: ListTile(
-                                        title: Text(
-                                          'Transfer to ' + recipient.toString(),
-                                          style: TextStyle(
-                                              fontWeight: fontWeightBoldGlobal),
-                                        ),
+                                        title: (recipient.runtimeType == int)
+                                            ? Text(
+                                                'Transfer to ' + recName,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        fontWeightBoldGlobal),
+                                              )
+                                            : Text(
+                                                recipient + ' Payment',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        fontWeightBoldGlobal),
+                                              ),
                                         trailing: Text(
                                           '- RM ' + outAmount.toString(),
                                           style: TextStyle(
