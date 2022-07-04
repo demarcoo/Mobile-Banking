@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:bankingapp/API/local_auth_api.dart';
 import 'dart:math' as math;
+import 'package:bankingapp/banking/services/DecimalFormatter.dart';
 
 // ignore: must_be_immutable
 
@@ -114,231 +115,194 @@ class _BankingPaymentDetailsState extends State<BankingPaymentDetails> {
     return Scaffold(
       backgroundColor: Banking_app_Background,
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .where('Account Number', isEqualTo: widget.accInfo!['accnumber'])
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
-            final double userCurrentBal =
-                (snapshot.data?.docs.first['Balance']);
-            return Container(
-              padding: EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    30.height,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Icon(Icons.chevron_left,
-                                size: 25, color: Banking_blackColor)
-                            .onTap(
-                          () {
-                            finish(context);
-                          },
-                        ),
-                        20.height,
-                        Text(widget.headerText!,
-                            style: boldTextStyle(
-                                size: 30, color: Banking_TextColorPrimary)),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Center(
-                        child: Image.asset(
-                      '${widget.paymentImg}',
-                      width: 100,
-                      height: 100,
-                      color: widget.imgColor,
-                    )),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        width: 180,
-                        child: TextField(
-                          cursorColor: Banking_Primary,
-                          cursorHeight: 16,
-                          controller: amountController,
-                          style: TextStyle(fontSize: 17),
-                          readOnly: false,
-                          // onChanged: (value) async {
-                          //   if (value.contains('.')) {
-                          //     FilteringTextInputFormatter.deny(RegExp(''));
-                          //   }
-                          // },
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            //get 2 decimal places only
-                            DecimalTextInputFormatter(decimalRange: 2),
-                            LengthLimitingTextInputFormatter(8),
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d*'))
-                          ],
-                          decoration: InputDecoration(
-                            prefixIcon: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(15, 15, 15, 17),
-                              child: Text(
-                                'RM',
-                                style: TextStyle(fontSize: 18),
-                              ),
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .where('Account Number', isEqualTo: widget.accInfo!['accnumber'])
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          final double userCurrentBal = (snapshot.data?.docs.first['Balance']);
+          return Container(
+            padding: EdgeInsets.all(16),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  30.height,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Icon(Icons.chevron_left,
+                              size: 25, color: Banking_blackColor)
+                          .onTap(
+                        () {
+                          finish(context);
+                        },
+                      ),
+                      20.height,
+                      Text(widget.headerText!,
+                          style: boldTextStyle(
+                              size: 30, color: Banking_TextColorPrimary)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Center(
+                      child: Image.asset(
+                    '${widget.paymentImg}',
+                    width: 100,
+                    height: 100,
+                    color: widget.imgColor,
+                  )),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      width: 180,
+                      child: TextField(
+                        cursorColor: Banking_Primary,
+                        cursorHeight: 16,
+                        controller: amountController,
+                        style: TextStyle(fontSize: 17),
+                        readOnly: false,
+                        // onChanged: (value) async {
+                        //   if (value.contains('.')) {
+                        //     FilteringTextInputFormatter.deny(RegExp(''));
+                        //   }
+                        // },
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          //get 2 decimal places only
+                          DecimalTextInputFormatter(decimalRange: 2),
+                          LengthLimitingTextInputFormatter(8),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d*'))
+                        ],
+                        decoration: InputDecoration(
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 15, 15, 17),
+                            child: Text(
+                              'RM',
+                              style: TextStyle(fontSize: 18),
                             ),
-                            hintText: 'Amount',
-                            alignLabelWithHint: true,
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Banking_Primary)),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Banking_Primary),
-                            ),
+                          ),
+                          hintText: 'Amount',
+                          alignLabelWithHint: true,
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Banking_Primary)),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary),
                           ),
                         ),
                       ),
                     ),
-                    Center(
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          if (amountController.text == '' ||
-                              int.parse(amountController.text) == 0) {
-                            return _showEmptyDialog(context);
-                          }
-                          double amountPay =
-                              double.parse(amountController.text);
-                          //check whether user balance is enough
+                  ),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        if (amountController.text == '' ||
+                            double.parse(amountController.text) == 0) {
+                          await ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text(
+                                'Invalid input, please specify the amount.'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.redAccent,
+                          ));
+                          amountController.clear();
+                          return;
+                          // return _showEmptyDialog(context);
+                        }
+                        double amountPay = double.parse(amountController.text);
+                        //check whether user balance is enough
 
-                          if (userCurrentBal < amountPay) {
-                            print('Insufficient Balance');
-                          } else {
-                            final isAuthenticated =
-                                await biomAuthentication.authenticate();
-                            if (isAuthenticated == true) {
-                              // deduct current balance
-                              final userNewBal =
-                                  await userCurrentBal - amountPay;
-                              print(userNewBal);
+                        if (userCurrentBal < amountPay) {
+                          print('Insufficient Balance');
+                        } else {
+                          final isAuthenticated =
+                              await biomAuthentication.authenticate();
+                          if (isAuthenticated == true) {
+                            // deduct current balance
+                            final userNewBal = await userCurrentBal - amountPay;
+                            print(userNewBal);
 
-                              //get doc reference
+                            //get doc reference
 
-                              final userPost = await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .where('Account Number',
-                                      isEqualTo: widget.accInfo!['accnumber'])
-                                  .limit(1)
-                                  .get()
-                                  .then(
-                                (QuerySnapshot querySnapshot) async {
-                                  return querySnapshot.docs[0].reference;
-                                },
-                              );
+                            final userPost = await FirebaseFirestore.instance
+                                .collection('users')
+                                .where('Account Number',
+                                    isEqualTo: widget.accInfo!['accnumber'])
+                                .limit(1)
+                                .get()
+                                .then(
+                              (QuerySnapshot querySnapshot) async {
+                                return querySnapshot.docs[0].reference;
+                              },
+                            );
 
-                              //update document in firebase
-                              var userBatch =
-                                  FirebaseFirestore.instance.batch();
-                              userBatch
-                                  .update(userPost, {'Balance': userNewBal});
-                              await userBatch.commit();
+                            //update document in firebase
+                            var userBatch = FirebaseFirestore.instance.batch();
+                            userBatch.update(userPost, {'Balance': userNewBal});
+                            await userBatch.commit();
 
-                              //record transaction to firestore database
+                            //record transaction to firestore database
 
-                              DateTime now = DateTime.now();
+                            DateTime now = DateTime.now();
 
-                              //store transaction detail
+                            //store transaction detail
 
-                              await FirebaseFirestore.instance
-                                  .collection('transactions')
-                                  .add(
-                                {
-                                  'Amount': amountPay,
-                                  'Recipient': widget.headerText,
-                                  'Recipient Name': '',
-                                  'Sender': widget.accInfo!['accnumber'],
-                                  'Date': now
-                                },
-                              );
+                            await FirebaseFirestore.instance
+                                .collection('transactions')
+                                .add(
+                              {
+                                'Amount': amountPay,
+                                'Recipient': widget.headerText,
+                                'Recipient Name': '',
+                                'Sender': widget.accInfo!['accnumber'],
+                                'Date': now
+                              },
+                            );
 
-                              //push to payment result screen
+                            //push to payment result screen
 
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentResult(),
-                                  settings: RouteSettings(
-                                    arguments: PaymentArguments(
-                                        widget.headerText!, amountPay),
-                                  ),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentResult(),
+                                settings: RouteSettings(
+                                  arguments: PaymentArguments(
+                                      widget.headerText!, amountPay),
                                 ),
-                              );
-                            }
+                              ),
+                            );
                           }
-                        },
-                        icon: Icon(
-                          Icons.payment,
-                          color: Banking_Secondary,
-                        ),
-                        label: Text(
-                          'Pay',
-                          style: TextStyle(color: Banking_Secondary),
-                        ),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Banking_Primary)),
+                        }
+                      },
+                      icon: Icon(
+                        Icons.payment,
+                        color: Banking_Secondary,
                       ),
-                    )
-                  ],
-                ),
+                      label: Text(
+                        'Pay',
+                        style: TextStyle(color: Banking_Secondary),
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Banking_Primary)),
+                    ),
+                  )
+                ],
               ),
-            );
-          }),
+            ),
+          );
+        },
+      ),
     );
-  }
-}
-
-//define the decimalformatter class
-class DecimalTextInputFormatter extends TextInputFormatter {
-  DecimalTextInputFormatter({required this.decimalRange})
-      : assert(decimalRange == null || decimalRange > 0);
-
-  final int decimalRange;
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue, // unused.
-    TextEditingValue newValue,
-  ) {
-    TextSelection newSelection = newValue.selection;
-    String truncated = newValue.text;
-
-    if (decimalRange != null) {
-      String value = newValue.text;
-
-      if (value.contains(".") &&
-          value.substring(value.indexOf(".") + 1).length > decimalRange) {
-        truncated = oldValue.text;
-        newSelection = oldValue.selection;
-      } else if (value == ".") {
-        truncated = "0.";
-
-        newSelection = newValue.selection.copyWith(
-          baseOffset: math.min(truncated.length, truncated.length + 1),
-          extentOffset: math.min(truncated.length, truncated.length + 1),
-        );
-      }
-
-      return TextEditingValue(
-        text: truncated,
-        selection: newSelection,
-        composing: TextRange.empty,
-      );
-    }
-    return newValue;
   }
 }

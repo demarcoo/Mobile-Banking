@@ -38,7 +38,7 @@ class SearchBankAccount extends StatefulWidget {
 }
 
 class _SearchBankAccountState extends State<SearchBankAccount> {
-  TextEditingController textFieldController = TextEditingController();
+  TextEditingController recAccountController = TextEditingController();
   final db = FirebaseFirestore.instance;
 
   Future<void> _showEmptyDialog(BuildContext context) async {
@@ -96,18 +96,6 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
         );
       },
     );
-  }
-
-  String? get _errorText {
-    // at any time, we can get the text from _controller.value.text
-    final text = textFieldController.text;
-    // Note: you can do your own custom validation here
-    // Move this logic this outside the widget for more testable code
-    if (text.isEmpty) {
-      return 'Can\'t be empty';
-    }
-    // return null if the text is valid
-    return null;
   }
 
   @override
@@ -180,7 +168,7 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                       padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
                       width: 350,
                       child: TextField(
-                        controller: textFieldController,
+                        controller: recAccountController,
                         style: TextStyle(fontSize: 18),
                         readOnly: false,
                         keyboardType: TextInputType.number,
@@ -189,7 +177,6 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: InputDecoration(
-                          errorText: _errorText,
                           hintText: 'Recipient Account No.',
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 15.0),
@@ -205,38 +192,50 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                     Container(
                       child: ElevatedButton.icon(
                           onPressed: () async {
-                            final recAccNum =
-                                await int.parse(textFieldController.text);
-                            final accName =
-                                await UserSecureStorage.getName() ?? '';
-                            final accNum =
-                                await UserSecureStorage.getAccNum() ?? '';
-                            // print(accNum + 'aaaa');
-                            if (textFieldController.text.length != 0) {
-                              final recDetails = await getBankAcc(
-                                  textFieldController.text, bank.name);
-                              if (recDetails != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        BankingTransferDetails(),
-                                    settings: RouteSettings(
-                                      arguments: ScreenArguments(
-                                          recDetails['name'],
-                                          recAccNum,
-                                          bank.name,
-                                          recDetails['bal'],
-                                          accName,
-                                          int.parse(accNum)),
+                            if (recAccountController.text != '' ||
+                                recAccountController.text.length == 12) {
+                              final recAccNum =
+                                  await int.parse(recAccountController.text);
+                              final accName =
+                                  await UserSecureStorage.getName() ?? '';
+                              final accNum =
+                                  await UserSecureStorage.getAccNum() ?? '';
+                              // print(accNum + 'aaaa');
+                              if (recAccountController.text.length != 0) {
+                                final recDetails = await getBankAcc(
+                                    recAccountController.text, bank.name);
+                                if (recDetails != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          BankingTransferDetails(),
+                                      settings: RouteSettings(
+                                        arguments: ScreenArguments(
+                                            recDetails['name'],
+                                            recAccNum,
+                                            bank.name,
+                                            recDetails['bal'],
+                                            accName,
+                                            int.parse(accNum)),
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } else {
+                                  _showEmptyDialog(context);
+                                }
                               } else {
-                                _showEmptyDialog(context);
+                                _showErrorDialog(context);
                               }
                             } else {
-                              _showErrorDialog(context);
+                              await ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Invalid input, please specify the correct recipient account number.'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
                             }
                           },
                           style: ButtonStyle(

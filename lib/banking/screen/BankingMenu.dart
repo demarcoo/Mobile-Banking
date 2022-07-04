@@ -1,3 +1,5 @@
+import 'package:bankingapp/banking/screen/BankingChangePassword.dart';
+import 'package:bankingapp/banking/screen/BankingChooseBanks.dart';
 import 'package:bankingapp/banking/screen/BankingQuestionAnswer.dart';
 import 'package:bankingapp/banking/screen/BankingRateInfo.dart';
 import 'package:bankingapp/banking/screen/BankingSignIn.dart';
@@ -97,7 +99,12 @@ class _BankingMenuState extends State<BankingMenu> {
                     bankingOption(Banking_ic_security,
                             Banking_lbl_Change_Password, Banking_pinkColor)
                         .onTap(() {
-                      // PurchaseMoreScreen().launch(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePassword(),
+                        ),
+                      );
                     }),
                     bankingOption(
                             Banking_ic_Share,

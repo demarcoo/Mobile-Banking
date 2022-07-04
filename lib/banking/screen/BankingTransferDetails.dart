@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:bankingapp/banking/screen/BankingTransferResult.dart';
 import 'package:bankingapp/banking/screen/BankingTransferToAccount.dart';
+import 'package:bankingapp/banking/services/DecimalFormatter.dart';
 import 'package:bankingapp/banking/services/classes.dart';
 import 'package:bankingapp/banking/services/phone_auth.dart';
 import 'package:bankingapp/banking/utils/BankingColors.dart';
@@ -307,6 +308,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
                                 inputFormatters: [
+                                  DecimalTextInputFormatter(decimalRange: 2),
                                   LengthLimitingTextInputFormatter(8),
                                   // FilteringTextInputFormatter.digitsOnly,
                                   FilteringTextInputFormatter.allow(
@@ -339,8 +341,20 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           ),
                           ElevatedButton.icon(
                             onPressed: () async {
-                              if (amountController.text == '') {
-                                return _showEmptyDialog(context);
+                              if (amountController.text == '' ||
+                                  double.parse(amountController.text) == 0) {
+                                await ScaffoldMessenger.of(context)
+                                    .showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Invalid input, please specify the amount.'),
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                );
+                                amountController.clear();
+
+                                return;
                               }
                               final amountTransfer =
                                   double.parse(amountController.text);

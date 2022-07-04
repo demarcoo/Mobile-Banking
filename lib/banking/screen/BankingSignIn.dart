@@ -106,6 +106,34 @@ class _BankingSignInState extends State<BankingSignIn> {
     );
   }
 
+  Future<void> _showFirstSignIn(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Initial Sign-In'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('For first time log in, please use username and password'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController passwordController = TextEditingController();
@@ -132,7 +160,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       SizedBox(
-                        height: 30,
+                        height: 50,
                       ),
                       Center(
                         child: Container(
@@ -250,7 +278,7 @@ class _BankingSignInState extends State<BankingSignIn> {
                             final name =
                                 await UserSecureStorage.getName() ?? '';
                             if (name == '') {
-                              return _showEmptyDialog(context);
+                              return _showFirstSignIn(context);
                             }
                             final isAuthenticated =
                                 await biomAuthentication.authenticate();
