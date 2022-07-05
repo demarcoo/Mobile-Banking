@@ -1,6 +1,7 @@
 import 'package:bankingapp/banking/screen/BankingTransferDetails.dart';
 import 'package:bankingapp/banking/services/database.dart';
 import 'package:bankingapp/banking/utils/secure_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -40,6 +41,17 @@ class SearchBankAccount extends StatefulWidget {
 class _SearchBankAccountState extends State<SearchBankAccount> {
   TextEditingController recAccountController = TextEditingController();
   final db = FirebaseFirestore.instance;
+  void initState() {
+    super.initState();
+
+    // init();
+  }
+
+  // Future init() async {
+  //   final name = await UserSecureStorage.getName() ?? '';
+  //   final accnum = await UserSecureStorage.getAccNum() ?? '';
+  //   final accBank = await UserSecureStorage.getBank() ?? '';
+  // }
 
   Future<void> _showEmptyDialog(BuildContext context) async {
     return showDialog<void>(
@@ -53,34 +65,6 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
               children: const <Widget>[
                 Text(
                     'Invalid account number, please input the correct account and try again'),
-                // Text('Please try again with the correct account number.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showErrorDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Invalid Input'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Please input the recipient account number and try again'),
                 // Text('Please try again with the correct account number.'),
               ],
             ),
@@ -169,6 +153,7 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                       width: 350,
                       child: TextField(
                         controller: recAccountController,
+                        cursorColor: Banking_Secondary,
                         style: TextStyle(fontSize: 18),
                         readOnly: false,
                         keyboardType: TextInputType.number,
@@ -191,64 +176,89 @@ class _SearchBankAccountState extends State<SearchBankAccount> {
                     ),
                     Container(
                       child: ElevatedButton.icon(
-                          onPressed: () async {
-                            if (recAccountController.text != '' ||
-                                recAccountController.text.length == 12) {
-                              final recAccNum =
-                                  await int.parse(recAccountController.text);
-                              final accName =
-                                  await UserSecureStorage.getName() ?? '';
-                              final accNum =
-                                  await UserSecureStorage.getAccNum() ?? '';
-                              // print(accNum + 'aaaa');
-                              if (recAccountController.text.length != 0) {
-                                final recDetails = await getBankAcc(
-                                    recAccountController.text, bank.name);
-                                if (recDetails != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          BankingTransferDetails(),
-                                      settings: RouteSettings(
-                                        arguments: ScreenArguments(
-                                            recDetails['name'],
-                                            recAccNum,
-                                            bank.name,
-                                            recDetails['bal'],
-                                            accName,
-                                            int.parse(accNum)),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  _showEmptyDialog(context);
-                                }
-                              } else {
-                                _showErrorDialog(context);
-                              }
-                            } else {
-                              await ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Invalid input, please specify the correct recipient account number.'),
+                        onPressed: () async {
+                          if (recAccountController.text.length == 12) {
+                            final recAccNum =
+                                await int.parse(recAccountController.text);
+                            final accName =
+                                await UserSecureStorage.getName() ?? '';
+                            final accNum =
+                                await UserSecureStorage.getAccNum() ?? '';
+                            final accBank =
+                                await UserSecureStorage.getBank() ?? '';
+                            // print(accNum + 'aaaa');
+
+                            final recDetails = await getBankAcc(
+                                recAccountController.text, bank.name);
+                            if (recDetails != null &&
+                                recAccountController.text != accNum &&
+                                bank.name != accBank) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BankingTransferDetails(),
+                                  settings: RouteSettings(
+                                    arguments: ScreenArguments(
+                                        recDetails['name'],
+                                        recAccNum,
+                                        bank.name,
+                                        recDetails['bal'],
+                                        accName,
+                                        int.parse(accNum)),
+                                  ),
+                                ),
+                              );
+                            }
+                            if (recDetails == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Account does not exist.'),
                                   duration: Duration(seconds: 2),
                                   backgroundColor: Colors.redAccent,
                                 ),
                               );
+                              recAccountController.clear();
+                              return;
+                              // _showEmptyDialog(context);
                             }
-                          },
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Banking_Primary)),
-                          icon: Icon(
-                            Icons.next_plan,
-                            color: Colors.black,
-                          ),
-                          label: Text(
-                            'Continue',
-                            style: TextStyle(color: Colors.black),
-                          )),
+                            if (recAccountController.text == accNum &&
+                                bank.name == accBank) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      Text('Unable to transfer to own account'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.redAccent,
+                                ),
+                              );
+                              return;
+                            }
+                          }
+                          if (recAccountController.text.length < 12) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Invalid input, please specify the correct account number.'),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                            return;
+                          }
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Banking_Primary)),
+                        icon: Icon(
+                          Icons.next_plan,
+                          color: Colors.black,
+                        ),
+                        label: Text(
+                          'Continue',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
                     )
                   ],
                 ),

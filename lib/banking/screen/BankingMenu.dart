@@ -94,41 +94,11 @@ class _BankingMenuState extends State<BankingMenu> {
                     borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   children: <Widget>[
-                    bankingOption(Banking_ic_Setting, Banking_lbl_Setting,
-                        Banking_blueColor),
-                    bankingOption(Banking_ic_security,
-                            Banking_lbl_Change_Password, Banking_pinkColor)
-                        .onTap(() {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChangePassword(),
-                        ),
-                      );
-                    }),
-                    bankingOption(
-                            Banking_ic_Share,
-                            Banking_lbl_Share_Information_account,
-                            Banking_greenLightColor)
-                        .onTap(() {
-                      //  BankingShareInformation().launch(context);
-                      // PurchaseMoreScreen().launch(context);
-                    }),
-                  ],
-                ),
-              ),
-              16.height,
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: boxDecorationWithShadow(
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  children: <Widget>[
                     10.height,
                     bankingOption(Banking_ic_News, Banking_lbl_News,
                             Banking_blueColor)
                         .onTap(() {
-                      // PurchaseMoreScreen().launch(context);
+                      //TODO
                     }),
                     bankingOption(
                             Banking_ic_Chart,
@@ -140,8 +110,7 @@ class _BankingMenuState extends State<BankingMenu> {
                     bankingOption(Banking_ic_Pin, Banking_lbl_Location,
                             Banking_greenLightColor)
                         .onTap(() {
-                      //BankingLocation().launch(context);
-                      // PurchaseMoreScreen().launch(context);
+                      //insert TODO
                     }),
                     10.height,
                   ],
@@ -183,6 +152,16 @@ class _BankingMenuState extends State<BankingMenu> {
                     borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   children: <Widget>[
+                    bankingOption(Banking_ic_security,
+                            Banking_lbl_Change_Password, Banking_pinkColor)
+                        .onTap(() {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePassword(),
+                        ),
+                      );
+                    }),
                     bankingOption(Banking_ic_Logout, Banking_lbl_Logout,
                             Banking_pinkColor)
                         .onTap(() {

@@ -32,6 +32,7 @@ class UserSecureStorage {
       await _storage.read(key: _keyAccNum);
   static Future<String?> getPhone() async =>
       await _storage.read(key: _keyPhone);
+  static Future<String?> getBank() async => await _storage.read(key: _keyBank);
 
   static Future<void> clearStorage() async {
     _storage.deleteAll();

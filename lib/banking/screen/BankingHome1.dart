@@ -52,6 +52,7 @@ class BankingHome1State extends State<BankingHome1> {
   Future init() async {
     final name = await UserSecureStorage.getName() ?? '';
     final accnum = await UserSecureStorage.getAccNum() ?? '';
+    final accBank = await UserSecureStorage.getBank() ?? '';
 
     setState(() {
       TopCard(

@@ -477,6 +477,21 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                           (Platform.isAndroid)
                               ? ElevatedButton.icon(
                                   onPressed: () async {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    if (amountController.text == '') {
+                                      await ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Invalid input, please specify the amount.'),
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.redAccent,
+                                        ),
+                                      );
+
+                                      return;
+                                    }
                                     final phoneNum =
                                         await UserSecureStorage.getPhone() ??
                                             '';
@@ -494,13 +509,19 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                               phoneNumber: '+601136695023',
                                               verificationCompleted:
                                                   (PhoneAuthCredential
-                                                      credential) async {},
+                                                      credential) async {
+                                                // print('aaa');
+                                              },
                                               verificationFailed:
                                                   (FirebaseAuthException e) {
                                                 if (e.code ==
                                                     'invalid-phone-number') {
                                                   print(
                                                       'The provided phone number is not valid.');
+                                                }
+                                                if (e.message!.contains(
+                                                    'invalid-verification-code')) {
+                                                  print('wrong code');
                                                 }
                                                 // Handle other errors
                                               },
@@ -521,6 +542,13 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                             MainAxisSize.min,
                                                         children: [
                                                           TextField(
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            inputFormatters: [
+                                                              LengthLimitingTextInputFormatter(
+                                                                  6)
+                                                            ],
                                                             controller:
                                                                 _otpcontroller,
                                                           )
@@ -542,147 +570,173 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                         verificationId,
                                                                     smsCode:
                                                                         smsCode);
+                                                            if (smsCode
+                                                                .isEmptyOrNull) {
+                                                              return _showEmptyDialog(
+                                                                  context);
+                                                            }
 
                                                             // Sign the user in (or link) with the credential
 
-                                                            await auth
-                                                                .signInWithCredential(
-                                                                    credential)
-                                                                .then(
-                                                                    (value) async {
-                                                              final userNewBal =
-                                                                  await userCurrentBal -
-                                                                      amountTransfer;
+                                                            try {
+                                                              await auth
+                                                                  .signInWithCredential(
+                                                                      credential)
+                                                                  .then(
+                                                                (value) async {
+                                                                  final userNewBal =
+                                                                      await userCurrentBal -
+                                                                          amountTransfer;
 
-                                                              print(userNewBal);
+                                                                  print(
+                                                                      userNewBal);
 
-                                                              final userPost = await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'users')
-                                                                  .where(
-                                                                      'Account Number',
-                                                                      isEqualTo:
-                                                                          int.parse(accnumController
+                                                                  final userPost = await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'users')
+                                                                      .where(
+                                                                          'Account Number',
+                                                                          isEqualTo: int.parse(accnumController
                                                                               .text))
-                                                                  .where('Name',
-                                                                      isEqualTo:
-                                                                          userController
-                                                                              .text)
-                                                                  .limit(1)
-                                                                  .get()
-                                                                  .then(
-                                                                (QuerySnapshot
-                                                                    querySnapshot) async {
-                                                                  return querySnapshot
-                                                                      .docs[0]
-                                                                      .reference;
-                                                                },
-                                                              );
-                                                              var userBatch =
-                                                                  FirebaseFirestore
+                                                                      .where(
+                                                                          'Name',
+                                                                          isEqualTo:
+                                                                              userController.text)
+                                                                      .limit(1)
+                                                                      .get()
+                                                                      .then(
+                                                                    (QuerySnapshot
+                                                                        querySnapshot) async {
+                                                                      return querySnapshot
+                                                                          .docs[
+                                                                              0]
+                                                                          .reference;
+                                                                    },
+                                                                  );
+                                                                  var userBatch =
+                                                                      FirebaseFirestore
+                                                                          .instance
+                                                                          .batch();
+                                                                  userBatch
+                                                                      .update(
+                                                                    userPost,
+                                                                    {
+                                                                      'Balance':
+                                                                          userNewBal
+                                                                    },
+                                                                  );
+                                                                  await userBatch
+                                                                      .commit();
+
+                                                                  //update recipient balance
+
+                                                                  final recNewBal =
+                                                                      await args
+                                                                              .recBal +
+                                                                          amountTransfer;
+
+                                                                  final recPost = await FirebaseFirestore
                                                                       .instance
-                                                                      .batch();
-                                                              userBatch.update(
-                                                                userPost,
-                                                                {
-                                                                  'Balance':
-                                                                      userNewBal
-                                                                },
-                                                              );
-                                                              await userBatch
-                                                                  .commit();
-
-                                                              //update recipient balance
-
-                                                              final recNewBal =
-                                                                  await args
-                                                                          .recBal +
-                                                                      amountTransfer;
-
-                                                              final recPost = await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'users')
-                                                                  .where(
-                                                                      'Account Number',
-                                                                      isEqualTo:
-                                                                          args
+                                                                      .collection(
+                                                                          'users')
+                                                                      .where(
+                                                                          'Account Number',
+                                                                          isEqualTo: args
                                                                               .recAccNum)
-                                                                  .where('Name',
-                                                                      isEqualTo:
-                                                                          args.recName)
-                                                                  .limit(1)
-                                                                  .get()
-                                                                  .then(
-                                                                (QuerySnapshot
-                                                                    querySnapshot) async {
-                                                                  return querySnapshot
-                                                                      .docs[0]
-                                                                      .reference;
+                                                                      .where(
+                                                                          'Name',
+                                                                          isEqualTo:
+                                                                              args.recName)
+                                                                      .limit(1)
+                                                                      .get()
+                                                                      .then(
+                                                                    (QuerySnapshot
+                                                                        querySnapshot) async {
+                                                                      return querySnapshot
+                                                                          .docs[
+                                                                              0]
+                                                                          .reference;
+                                                                    },
+                                                                  );
+                                                                  var recBatch =
+                                                                      FirebaseFirestore
+                                                                          .instance
+                                                                          .batch();
+                                                                  recBatch.update(
+                                                                      recPost, {
+                                                                    'Balance':
+                                                                        recNewBal
+                                                                  });
+                                                                  await recBatch
+                                                                      .commit();
+
+                                                                  DateTime now =
+                                                                      DateTime
+                                                                          .now();
+                                                                  String
+                                                                      formattedDate =
+                                                                      DateFormat(
+                                                                              'yyyy-MM-dd')
+                                                                          .format(
+                                                                              now);
+                                                                  print(
+                                                                      formattedDate);
+
+                                                                  //store transaction details
+
+                                                                  await FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'transactions')
+                                                                      .add({
+                                                                    'Amount':
+                                                                        amountTransfer,
+                                                                    'Recipient':
+                                                                        args.recAccNum,
+                                                                    'Sender': args
+                                                                        .accNumber,
+                                                                    'Date':
+                                                                        formattedDate
+                                                                  });
+                                                                  finish(
+                                                                      context);
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              TransferResult(),
+                                                                      settings:
+                                                                          RouteSettings(
+                                                                        arguments: TransferArguments(
+                                                                            args.recName,
+                                                                            args.recAccNum,
+                                                                            args.recBank,
+                                                                            amountTransfer),
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ).catchError(
+                                                                (err) {
+                                                                  //action if wrong OTP
+                                                                  if (err
+                                                                      .toString()
+                                                                      .contains(
+                                                                          'invalid-verification-code')) {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    _otpcontroller
+                                                                        .clear();
+                                                                  }
+                                                                  // print(err);
                                                                 },
                                                               );
-                                                              var recBatch =
-                                                                  FirebaseFirestore
-                                                                      .instance
-                                                                      .batch();
-                                                              recBatch.update(
-                                                                  recPost, {
-                                                                'Balance':
-                                                                    recNewBal
-                                                              });
-                                                              await recBatch
-                                                                  .commit();
-
-                                                              DateTime now =
-                                                                  DateTime
-                                                                      .now();
-                                                              String
-                                                                  formattedDate =
-                                                                  DateFormat(
-                                                                          'yyyy-MM-dd')
-                                                                      .format(
-                                                                          now);
-                                                              print(
-                                                                  formattedDate);
-
-                                                              //store transaction details
-
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'transactions')
-                                                                  .add({
-                                                                'Amount':
-                                                                    amountTransfer,
-                                                                'Recipient': args
-                                                                    .recAccNum,
-                                                                'Sender': args
-                                                                    .accNumber,
-                                                                'Date':
-                                                                    formattedDate
-                                                              });
-                                                              finish(context);
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          TransferResult(),
-                                                                  settings:
-                                                                      RouteSettings(
-                                                                    arguments: TransferArguments(
-                                                                        args.recName,
-                                                                        args.recAccNum,
-                                                                        args.recBank,
-                                                                        amountTransfer),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }).catchError(
-                                                                    (err) {
-                                                              print(err);
-                                                            });
+                                                            } catch (e) {
+                                                              return;
+                                                            }
                                                           },
                                                           child: Text('Verify'),
                                                           backgroundColor:

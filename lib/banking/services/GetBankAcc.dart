@@ -5,10 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 Future<dynamic> getBankAcc(input, bank) async {
-  late var accName;
-  late double accBal;
-  late dynamic accNumber;
-  late dynamic accDetails;
+  var x;
 
   await FirebaseFirestore.instance
       .collection('users')
@@ -18,19 +15,20 @@ Future<dynamic> getBankAcc(input, bank) async {
       .then(
     (QuerySnapshot querySnapshot) async {
       if (querySnapshot.docs.isEmpty) {
-        accName = '';
-        return;
+        // accName = '';
+        // accBal = 0;
       } else {
         // print(querySnapshot.docs.first['Name']);
-        accName = await querySnapshot.docs.first['Name'];
-        accNumber = await querySnapshot.docs.first['Account Number'].toString();
-        accBal = await querySnapshot.docs.first['Balance'];
+        String accName = await querySnapshot.docs.first['Name'];
+        String accNumber =
+            await querySnapshot.docs.first['Account Number'].toString();
+        double accBal = await querySnapshot.docs.first['Balance'];
+        x = {'name': accName, 'bal': accBal};
       }
     },
   );
-  Map<String, dynamic> toMap() {
-    return {'name': accName, 'bal': accBal};
-  }
+  return x;
+  // Map<String, dynamic> toMap() {
 
-  return toMap();
+  // return toMap();
 }

@@ -60,6 +60,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       color: Banking_app_Background,
       child: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: Banking_app_Background,
           body: Container(
             padding: EdgeInsets.all(16),
@@ -95,8 +96,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                   height: 30,
                   child: TextField(
                     controller: _currentPassword,
+                    cursorColor: Banking_Secondary,
                     obscureText: true,
-                    decoration: InputDecoration(hintText: 'Password'),
+                    decoration: InputDecoration(
+                        hintText: 'Password',
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary))),
                   ),
                 ),
                 SizedBox(
@@ -108,9 +113,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       TextStyle(fontSize: 18, fontWeight: fontWeightBoldGlobal),
                 ),
                 Container(
-                  height: 30,
+                  height: 50,
                   child: TextField(
                     controller: _newPassword,
+                    cursorColor: Banking_Secondary,
                     obscureText: _passwordVisible!,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
@@ -121,12 +127,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                             });
                           },
                           icon: Icon(
-                            Icons.lock,
+                            (_passwordVisible == true)
+                                ? Icons.lock_outline_rounded
+                                : Icons.lock_open_outlined,
                             color: Banking_Secondary,
                           ),
                           padding: EdgeInsets.only(bottom: 7.5),
                         ),
-                        hintText: 'Min. 8 chars w/ Upper, Lower, Symbols'),
+                        hintText: 'Min. 8 chars w/ Upper, Lower, Symbols',
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary))),
                   ),
                 ),
                 SizedBox(
@@ -138,11 +148,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                       TextStyle(fontSize: 18, fontWeight: fontWeightBoldGlobal),
                 ),
                 Container(
-                  height: 30,
+                  height: 50,
                   child: TextField(
                     controller: _confirmPassword,
                     obscureText: true,
-                    decoration: InputDecoration(hintText: 'Re-type password'),
+                    cursorColor: Banking_Secondary,
+                    decoration: InputDecoration(
+                        hintText: 'Re-type password',
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Banking_Primary))),
                   ),
                 ),
                 Center(
@@ -150,6 +164,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
                       onPressed: () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        //check empty fields
                         if (_currentPassword.text == '' ||
                             _newPassword.text == '' ||
                             _confirmPassword.text == '') {
@@ -172,25 +189,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 ),
                               );
                             } else {
-                              if (_newPassword.text.length < 8 ||
-                                  !_newPassword.text.contains(
-                                    RegExp(
-                                        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"),
-                                  )) {
-                                await ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Please create a stronger password'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                                _currentPassword.clear();
-                                _newPassword.clear();
-                                _confirmPassword.clear();
-                                return;
-                              }
+                              //check password strength
                               if (_newPassword.text == _currentPassword.text) {
                                 await ScaffoldMessenger.of(context)
                                     .showSnackBar(
@@ -206,6 +205,25 @@ class _ChangePasswordState extends State<ChangePassword> {
 
                               if (_newPassword.text == _confirmPassword.text &&
                                   _newPassword.text != _currentPassword.text) {
+                                if (_newPassword.text.length < 8 ||
+                                    !_newPassword.text.contains(
+                                      RegExp(
+                                          r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"),
+                                    )) {
+                                  await ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Please create a stronger password'),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  _currentPassword.clear();
+                                  _newPassword.clear();
+                                  _confirmPassword.clear();
+                                  return;
+                                }
                                 final newPassword = _newPassword.text;
 
                                 //get firestore document reference
