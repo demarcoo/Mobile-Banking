@@ -23,6 +23,7 @@ class _TransferResultState extends State<TransferResult> {
     final args =
         ModalRoute.of(context)!.settings.arguments as TransferArguments;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Banking_app_Background,
       body: Column(
         children: [

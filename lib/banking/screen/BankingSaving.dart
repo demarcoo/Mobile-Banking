@@ -47,7 +47,7 @@ class _BankingSavingState extends State<BankingSaving> {
                     30.height,
                     ListView.builder(
                       scrollDirection: Axis.vertical,
-                      itemCount: 4,
+                      itemCount: savingList.length,
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
@@ -69,8 +69,13 @@ class _BankingSavingState extends State<BankingSaving> {
                                     shape: BoxShape.circle,
                                     color: Banking_palColor),
                                 padding: EdgeInsets.all(16),
-                                child: Image.asset(Banking_ic_piggyBank,
-                                    height: 20, width: 20, fit: BoxFit.fill),
+                                child: Image.asset(
+                                  Banking_ic_piggyBank,
+                                  height: 20,
+                                  width: 20,
+                                  fit: BoxFit.fill,
+                                  color: Colors.greenAccent,
+                                ),
                               ).center(),
                               10.width,
                               Column(

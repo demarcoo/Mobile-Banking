@@ -72,16 +72,16 @@ List<BankingSavingModel> bankingSavingList() {
   List<BankingSavingModel> list = [];
 
   var list1 = BankingSavingModel(
-      title: "Saving 1",
-      date: "22 Apr 2020",
-      rs: "\$12,000",
+      title: "January Savings",
+      date: "31 Jan 2022",
+      rs: "RM 1,500",
       interest: "Interest 8 % - 8 Months");
   list.add(list1);
 
   var list2 = BankingSavingModel(
-      title: "Saving 2",
-      date: "22 Mar 2020",
-      rs: "\$20,000",
+      title: "February Savings",
+      date: "28 Feb 2022",
+      rs: "RM 1,000",
       interest: "Interest 4 % - 2 Months");
   list.add(list2);
 

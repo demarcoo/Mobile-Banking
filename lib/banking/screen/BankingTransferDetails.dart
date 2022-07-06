@@ -674,14 +674,14 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                   DateTime now =
                                                                       DateTime
                                                                           .now();
-                                                                  String
-                                                                      formattedDate =
-                                                                      DateFormat(
-                                                                              'yyyy-MM-dd')
-                                                                          .format(
-                                                                              now);
-                                                                  print(
-                                                                      formattedDate);
+                                                                  // String
+                                                                  //     formattedDate =
+                                                                  //     DateFormat(
+                                                                  //             'yyyy-MM-dd')
+                                                                  //         .format(
+                                                                  //             now);
+                                                                  // print(
+                                                                  //     formattedDate);
 
                                                                   //store transaction details
 
@@ -694,10 +694,13 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                         amountTransfer,
                                                                     'Recipient':
                                                                         args.recAccNum,
+                                                                    'Recipient Name':
+                                                                        args.recName,
                                                                     'Sender': args
                                                                         .accNumber,
-                                                                    'Date':
-                                                                        formattedDate
+                                                                    'Sender Name':
+                                                                        args.accName,
+                                                                    'Date': now
                                                                   });
                                                                   finish(
                                                                       context);
@@ -731,7 +734,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                     _otpcontroller
                                                                         .clear();
                                                                   }
-                                                                  // print(err);
                                                                 },
                                                               );
                                                             } catch (e) {
