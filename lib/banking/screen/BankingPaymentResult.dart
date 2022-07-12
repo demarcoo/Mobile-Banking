@@ -23,6 +23,7 @@ class _PaymentResultState extends State<PaymentResult> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as PaymentArguments;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Banking_app_Background,
       body: Column(
         children: [

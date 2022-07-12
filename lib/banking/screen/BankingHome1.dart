@@ -198,7 +198,9 @@ class BankingHome1State extends State<BankingHome1> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  child: SizedBox.shrink(),
+                  child: SizedBox(
+                    height: context.height(),
+                  ),
                 )
               ],
             ),

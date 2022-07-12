@@ -167,23 +167,15 @@ class _BankingMenuState extends State<BankingMenu> {
                         .onTap(() {
                       showDialog(
                         context: context,
-                        builder: (BuildContext context) => CustomDialog(),
+                        builder: (BuildContext context) => logoutDialog(),
                       );
                     }),
                     bankingOption(Banking_ic_Remove, 'Remove Account',
                             Banking_pinkColor)
                         .onTap(() async {
-                      setState(
-                        () {
-                          UserSecureStorage.clearStorage();
-                        },
-                      );
-                      finish(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BankingSignIn(),
-                        ),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => removeDialog(),
                       );
                     })
                   ],
@@ -197,7 +189,7 @@ class _BankingMenuState extends State<BankingMenu> {
   }
 }
 
-class CustomDialog extends StatelessWidget {
+class logoutDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -206,12 +198,77 @@ class CustomDialog extends StatelessWidget {
       ),
       elevation: 0.0,
       backgroundColor: Colors.transparent,
-      child: dialogContent(context),
+      child: logoutContent(context),
     );
   }
 }
 
-dialogContent(BuildContext context) {
+class removeDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 0.0,
+      backgroundColor: Colors.transparent,
+      child: removeContent(context),
+    );
+  }
+}
+
+logoutContent(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.rectangle,
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [
+        BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10.0,
+            offset: const Offset(0.0, 10.0)),
+      ],
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        16.height,
+        Text(Banking_lbl_Confirmation, style: primaryTextStyle(size: 18))
+            .onTap(() {
+          finish(context);
+        }).paddingOnly(top: 8, bottom: 8),
+        Divider(height: 10, thickness: 1.0, color: Banking_greyColor),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text("No", style: primaryTextStyle(size: 18)).onTap(() {
+              finish(context);
+            }).paddingRight(16),
+            Container(width: 1.0, height: 40, color: Banking_greyColor)
+                .center(),
+            Text(
+              "Yes",
+              style: primaryTextStyle(size: 18, color: Banking_Primary),
+            ).onTap(() {
+              finish(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BankingSignIn(),
+                ),
+              );
+            }).paddingLeft(16)
+          ],
+        ),
+        16.height,
+      ],
+    ),
+  );
+}
+
+removeContent(BuildContext context) {
   return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -228,8 +285,7 @@ dialogContent(BuildContext context) {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           16.height,
-          Text(Banking_lbl_Confirmation_for_logout,
-                  style: primaryTextStyle(size: 18))
+          Text(Banking_lbl_Confirmation, style: primaryTextStyle(size: 18))
               .onTap(() {
             finish(context);
           }).paddingOnly(top: 8, bottom: 8),
@@ -238,14 +294,15 @@ dialogContent(BuildContext context) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text("Cancel", style: primaryTextStyle(size: 18)).onTap(() {
+              Text("No", style: primaryTextStyle(size: 18)).onTap(() {
                 finish(context);
               }).paddingRight(16),
               Container(width: 1.0, height: 40, color: Banking_greyColor)
                   .center(),
-              Text("Logout",
+              Text("Yes",
                       style: primaryTextStyle(size: 18, color: Banking_Primary))
-                  .onTap(() {
+                  .onTap(() async {
+                await UserSecureStorage.clearStorage();
                 finish(context);
                 Navigator.push(
                   context,

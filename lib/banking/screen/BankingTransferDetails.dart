@@ -106,6 +106,34 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
     );
   }
 
+  Future<void> _showInvalidOTP(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Incorrect OTP'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('OTP does not match, please try again.'),
+                // Text('Please try again with the correct account number.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -312,7 +340,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   LengthLimitingTextInputFormatter(8),
                                   // FilteringTextInputFormatter.digitsOnly,
                                   FilteringTextInputFormatter.allow(
-                                      RegExp('[0-9.]+')),
+                                      RegExp(r'^\d+\.?\d*')),
                                 ],
                                 decoration: InputDecoration(
                                   prefixIcon: Padding(
@@ -506,7 +534,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                     } else {
                                       await FirebaseAuth.instance
                                           .verifyPhoneNumber(
-                                              phoneNumber: '+601136695023',
+                                              phoneNumber: phoneNum,
                                               verificationCompleted:
                                                   (PhoneAuthCredential
                                                       credential) async {
@@ -729,7 +757,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                       .toString()
                                                                       .contains(
                                                                           'invalid-verification-code')) {
-                                                                    Navigator.pop(
+                                                                    _showInvalidOTP(
                                                                         context);
                                                                     _otpcontroller
                                                                         .clear();
