@@ -398,8 +398,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   final userNewBal =
                                       await userCurrentBal - amountTransfer;
 
-                                  print(userNewBal);
-
                                   final userPost = await FirebaseFirestore
                                       .instance
                                       .collection('users')
@@ -446,9 +444,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                   await recBatch.commit();
 
                                   DateTime now = DateTime.now();
-                                  //  formattedDate =
-                                  //     DateFormat('yyyy-MM-dd').format(now);
-                                  // print(formattedDate);
 
                                   //store transaction detail
 
@@ -537,9 +532,7 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                               phoneNumber: phoneNum,
                                               verificationCompleted:
                                                   (PhoneAuthCredential
-                                                      credential) async {
-                                                // print('aaa');
-                                              },
+                                                      credential) async {},
                                               verificationFailed:
                                                   (FirebaseAuthException e) {
                                                 if (e.code ==
@@ -589,7 +582,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                 _otpcontroller
                                                                     .text
                                                                     .trim();
-
                                                             // Create a PhoneAuthCredential with the code
                                                             PhoneAuthCredential
                                                                 credential =
@@ -612,12 +604,10 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                       credential)
                                                                   .then(
                                                                 (value) async {
+                                                                  //update database
                                                                   final userNewBal =
                                                                       await userCurrentBal -
                                                                           amountTransfer;
-
-                                                                  print(
-                                                                      userNewBal);
 
                                                                   final userPost = await FirebaseFirestore
                                                                       .instance
@@ -702,14 +692,6 @@ class _BankingTransferDetailsState extends State<BankingTransferDetails> {
                                                                   DateTime now =
                                                                       DateTime
                                                                           .now();
-                                                                  // String
-                                                                  //     formattedDate =
-                                                                  //     DateFormat(
-                                                                  //             'yyyy-MM-dd')
-                                                                  //         .format(
-                                                                  //             now);
-                                                                  // print(
-                                                                  //     formattedDate);
 
                                                                   //store transaction details
 

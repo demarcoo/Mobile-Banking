@@ -13,7 +13,6 @@ Future<dynamic> userAuth(username, password) async {
   late String? bank;
   late double? balance;
   late Map myMap;
-  late List accInfo;
 
   await FirebaseFirestore.instance
       .collection('users')
@@ -25,15 +24,9 @@ Future<dynamic> userAuth(username, password) async {
       if (querySnapshot.docs.isEmpty) {
         isLoggedin = false;
         myMap = <String, dynamic>{};
-        // final accMap = <String, dynamic>{};
-        // // name = '';
-        // accNum = 0;
-        // phone = '';
-        // bank = '';
-        // balance = 0;
       } else {
         isLoggedin = true;
-        print(querySnapshot.docs.first['Name']);
+        //print(querySnapshot.docs.first['Name']);
         name = await querySnapshot.docs.first['Name'];
         accNum = await querySnapshot.docs.first['Account Number'];
         phone = await querySnapshot.docs.first['Phone'];
@@ -49,16 +42,5 @@ Future<dynamic> userAuth(username, password) async {
       }
     },
   );
-  // Map<String, dynamic> toMap() {
-  //   return {
-  //     'name': name,
-  //     'accnumber': accNum,
-  //     'phone': phone,
-  //     'bank': bank,
-  //     'bal': balance
-  //   };
-  // }
-
   return myMap;
 }
-// }

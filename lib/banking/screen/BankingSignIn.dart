@@ -233,7 +233,6 @@ class _BankingSignInState extends State<BankingSignIn> {
                             Map isLoggedin = await userAuth(
                                 usernameController.text,
                                 passwordController.text);
-                            // print(isLoggedin['name']);
 
                             if (isLoggedin.isNotEmpty) {
                               //set user info

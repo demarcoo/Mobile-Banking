@@ -44,6 +44,7 @@ class _BankingPaymentDetailsState extends State<BankingPaymentDetails> {
   late List<BankingPaymentModel> mList2;
   FirebaseAuth auth = FirebaseAuth.instance;
   bool? isValid = false;
+  bool _isLoading = false;
   final _otpcontroller = TextEditingController();
 
   final amountController = TextEditingController();
@@ -77,6 +78,27 @@ class _BankingPaymentDetailsState extends State<BankingPaymentDetails> {
         );
       },
     );
+  }
+
+  void _onLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Loading"),
+            ],
+          ),
+        );
+      },
+    );
+    new Future.delayed(new Duration(seconds: 3), () {
+      Navigator.pop(context); //pop dialog
+    });
   }
 
   Future<void> _showInsufficientDialog(BuildContext context) async {

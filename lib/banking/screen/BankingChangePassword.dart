@@ -208,7 +208,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 if (_newPassword.text.length < 8 ||
                                     !_newPassword.text.contains(
                                       RegExp(
-                                          r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"),
+                                          r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"), //strong password policy
                                     )) {
                                   await ScaffoldMessenger.of(context)
                                       .showSnackBar(

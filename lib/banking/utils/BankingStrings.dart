@@ -1,10 +1,14 @@
 const Banking_lbl_app_Name = "Capital Bank";
 const Banking_lbl_app_Sub_title = "Mobile Banking Apps";
-const Banking_lbl_Walk1Title = "Online Payment";
-const Banking_lbl_Walk2Title = "Quickly Tranfer";
-const Banking_lbl_Walk3Title = "Saving Online";
+const Banking_lbl_Walk1Title = "Secure Transfer";
+const Banking_lbl_Walk2Title = "Fast Payment";
+const Banking_lbl_Walk3Title = "User Friendly";
 const Banking_lbl_Walk1SubTitle =
-    "Each payment process is so simple and hassle-free, and I don not need to be worried about being scammedEach Payment process is so simple and hassle-free";
+    "With multiple security mechanism, your account is safer than it has ever been";
+const Banking_lbl_Walk2SubTitle =
+    "Conducting transaction is just few clicks away!";
+const Banking_lbl_Walk3SubTitle =
+    "Straightforward and simple design for easier usability";
 const Banking_lbl_Get_Started = "Get Started";
 const Banking_lbl_SignIn = "Sign In";
 const Banking_lbl_Forgot = "Forgot?";
