@@ -1,4 +1,4 @@
-# Mobile Banking Application Prototype
+# Mobile Banking Application Prototype - FLUTTER
 
-m-Banking app with Firebase integration and Local Authentication
+m-Banking app created with Flutter and Firebase integration with the addition of Local Authentication
 
