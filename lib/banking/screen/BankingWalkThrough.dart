@@ -19,9 +19,17 @@ class _BankingWalkThroughState extends State<BankingWalkThrough> {
   int currentIndexPage = 0;
   int? pageLength;
 
-  var titles = [Banking_lbl_Walk1Title, Banking_lbl_Walk2Title, Banking_lbl_Walk3Title];
+  var titles = [
+    Banking_lbl_Walk1Title,
+    Banking_lbl_Walk2Title,
+    Banking_lbl_Walk3Title
+  ];
 
-  var subTitles = [Banking_lbl_Walk1SubTitle, Banking_lbl_Walk1SubTitle, Banking_lbl_Walk1SubTitle];
+  var subTitles = [
+    Banking_lbl_Walk1SubTitle,
+    Banking_lbl_Walk2SubTitle,
+    Banking_lbl_Walk3SubTitle
+  ];
 
   @override
   void initState() {
@@ -58,7 +66,11 @@ class _BankingWalkThroughState extends State<BankingWalkThrough> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(titles[currentIndexPage], style: boldTextStyle(size: 20, color: Banking_TextColorPrimary, fontFamily: fontBold)),
+                  Text(titles[currentIndexPage],
+                      style: boldTextStyle(
+                          size: 20,
+                          color: Banking_TextColorPrimary,
+                          fontFamily: fontBold)),
                   10.height,
                   // Adding Button
                 ],
@@ -71,7 +83,11 @@ class _BankingWalkThroughState extends State<BankingWalkThrough> {
             top: context.height() * 0.58,
             child: Align(
               alignment: Alignment.center,
-              child: DotsIndicator(dotsCount: 3, position: currentIndexPage.toDouble(), decorator: DotsDecorator(color: Banking_view_color, activeColor: Banking_Primary)),
+              child: DotsIndicator(
+                  dotsCount: 3,
+                  position: currentIndexPage.toDouble(),
+                  decorator: DotsDecorator(
+                      color: Banking_view_color, activeColor: Banking_Primary)),
             ),
           ),
           Positioned(
@@ -86,7 +102,10 @@ class _BankingWalkThroughState extends State<BankingWalkThrough> {
                   Center(
                     child: Text(
                       subTitles[currentIndexPage],
-                      style: primaryTextStyle(fontFamily: fontRegular, size: 14, color: Banking_TextColorSecondary),
+                      style: primaryTextStyle(
+                          fontFamily: fontRegular,
+                          size: 14,
+                          color: Banking_TextColorSecondary),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -96,7 +115,7 @@ class _BankingWalkThroughState extends State<BankingWalkThrough> {
                     textContent: Banking_lbl_Get_Started,
                     onPressed: () {
                       finish(context);
-                      BankingSignIn().launch(context,isNewTask: true);
+                      BankingSignIn().launch(context, isNewTask: true);
                     },
                   ),
                 ],

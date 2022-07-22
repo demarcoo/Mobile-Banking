@@ -1,9 +1,14 @@
 const Banking_lbl_app_Name = "Capital Bank";
 const Banking_lbl_app_Sub_title = "Mobile Banking Apps";
-const Banking_lbl_Walk1Title = "Online Payment";
-const Banking_lbl_Walk2Title = "Quickly Tranfer";
-const Banking_lbl_Walk3Title = "Saving Online";
-const Banking_lbl_Walk1SubTitle = "Each payment process is so simple and hassle-free, and I don not need to be worried about being scammedEach Payment process is so simple and hassle-free";
+const Banking_lbl_Walk1Title = "Secure Transfer";
+const Banking_lbl_Walk2Title = "Fast Payment";
+const Banking_lbl_Walk3Title = "User Friendly";
+const Banking_lbl_Walk1SubTitle =
+    "With multiple security mechanism, your account is safer than it has ever been";
+const Banking_lbl_Walk2SubTitle =
+    "Conducting transaction is just few clicks away!";
+const Banking_lbl_Walk3SubTitle =
+    "Straightforward and simple design for easier usability";
 const Banking_lbl_Get_Started = "Get Started";
 const Banking_lbl_SignIn = "Sign In";
 const Banking_lbl_Forgot = "Forgot?";
@@ -31,7 +36,7 @@ const Banking_lbl_Bank = "Bank";
 const Banking_lbl_Branch = "Branch";
 const Banking_lbl_QR_Code = "QR Code";
 const Banking_lbl_Share_Info = "Share your Information to";
-const Banking_lbl_Confirmation_for_logout = "Do You want to Log Out ?";
+const Banking_lbl_Confirmation = "Are you sure ?";
 const Banking_lbl_Saving_Online = "Saving Online";
 const Banking_lbl_Add_New_Saving = "Add New Saving";
 const Banking_lbl_Choose_Account_to_Saving = "Choose Account to Saving";
@@ -45,7 +50,8 @@ const Banking_lbl_Payment_History = "Payment\nHistory";
 const Banking_lbl_Get_OTP = "Get OTP";
 const Banking_lbl_Confirm_Transfer = "Confirm Transfer";
 const Banking_lbl_Transfer_Successful = "Transfer\nSuccessful";
-const Banking_lbl_Info_Transfer_Successful = "You Have successfully transfered \$1000 \n to John Smith";
+const Banking_lbl_Info_Transfer_Successful =
+    "You Have successfully transfered \$1000 \n to John Smith";
 const Banking_lbl_Transaction_History = "Transaction History";
 const Banking_lbl_Rate_Info = "Rate \nInformation";
 const Banking_lbl_Branch_Location = "Branch \nLocation";

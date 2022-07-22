@@ -1,9 +1,11 @@
 import 'package:bankingapp/banking/utils/BankingColors.dart';
 import 'package:bankingapp/banking/utils/BankingContants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
 class BankingButton extends StatefulWidget {
@@ -14,7 +16,12 @@ class BankingButton extends StatefulWidget {
   var height = 50.0;
   var radius = 5.0;
 
-  BankingButton({required this.textContent, required this.onPressed, this.isStroked = false, this.height = 45.0, this.radius = 5.0});
+  BankingButton(
+      {required this.textContent,
+      required this.onPressed,
+      this.isStroked = false,
+      this.height = 45.0,
+      this.radius = 5.0});
 
   @override
   BankingButtonState createState() => BankingButtonState();
@@ -31,9 +38,15 @@ class BankingButtonState extends State<BankingButton> {
         alignment: Alignment.center,
         child: Text(
           widget.textContent.toUpperCase(),
-          style: primaryTextStyle(color: widget.isStroked ? Banking_Primary : Banking_whitePureColor, size: 18, fontFamily: fontMedium),
+          style: primaryTextStyle(
+              color:
+                  widget.isStroked ? Banking_Primary : Banking_whitePureColor,
+              size: 18,
+              fontFamily: fontMedium),
         ).center(),
-        decoration: widget.isStroked ? boxDecoration(bgColor: Colors.transparent, color: Banking_Primary) : boxDecoration(bgColor: Banking_Secondary, radius: widget.radius),
+        decoration: widget.isStroked
+            ? boxDecoration(bgColor: Colors.transparent, color: Banking_Primary)
+            : boxDecoration(bgColor: Banking_Secondary, radius: widget.radius),
       ),
     );
   }
@@ -48,7 +61,9 @@ Widget bankingOption(var icon, var heading, Color color) {
           children: <Widget>[
             Image.asset(icon, color: color, height: 20, width: 20),
             16.width,
-            Text(heading, style: primaryTextStyle(color: Banking_TextColorPrimary, size: 18)),
+            Text(heading,
+                style: primaryTextStyle(
+                    color: Banking_TextColorPrimary, size: 18)),
           ],
         ).expand(),
         Icon(Icons.keyboard_arrow_right, color: Banking_TextColorSecondary),
@@ -61,38 +76,85 @@ class TopCard extends StatelessWidget {
   final String name;
   final String acno;
   final String bal;
+  final String acctype;
 
-  TopCard({Key? key, required this.name, required this.acno, required this.bal}) : super(key: key);
+  TopCard(
+      {Key? key,
+      required this.name,
+      required this.acno,
+      required this.bal,
+      required this.acctype})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: context.width(),
-      height: context.height(),
+      height: context.width(),
+      padding: EdgeInsets.only(bottom: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Expanded(
-            child: Row(
-              children: [
-                Icon(Icons.account_balance_wallet, color: Banking_Primary, size: 30).paddingOnly(top: 8, left: 8),
-                Text(name, style: primaryTextStyle(size: 18)).paddingOnly(left: 8, top: 8).expand(),
-                Icon(Icons.info, color: Banking_greyColor, size: 20).paddingOnly(right: 8)
-              ],
+          SizedBox(
+            height: 30,
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.account_balance_wallet,
+                color: Banking_Primary,
+                size: 30,
+              ).paddingOnly(top: 8, left: 8),
+              Text(name,
+                      style: primaryTextStyle(
+                          size: 24, weight: fontWeightBoldGlobal))
+                  .paddingOnly(left: 8, top: 8)
+                  .expand(),
+              // Icon(Icons.info, color: Banking_greyColor, size: 20)
+              //     .paddingOnly(right: 8),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                acctype,
+                style: primaryTextStyle(size: 14, weight: fontWeightBoldGlobal),
+              ).paddingOnly(left: 45, bottom: 8),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: Divider(
+              height: 4,
+              thickness: 1.5,
+              indent: 10,
+              endIndent: 10,
             ),
+          ),
+          SizedBox(
+            height: 20,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Account Number", style: secondaryTextStyle(size: 16)).paddingOnly(left: 8, top: 8, bottom: 8),
-              Text(acno, style: primaryTextStyle(color: Banking_TextColorYellow)).paddingOnly(right: 8, top: 8, bottom: 8),
+              Text("Account Number", style: secondaryTextStyle(size: 18))
+                  .paddingOnly(left: 8, top: 8, bottom: 8),
+              Text(acno,
+                      style: primaryTextStyle(
+                          color: Banking_TextColorYellow, size: 18))
+                  .paddingOnly(right: 8, top: 8, bottom: 8),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Balance", style: secondaryTextStyle(size: 16)).paddingOnly(left: 8, top: 8, bottom: 8),
-              Text(bal, style: primaryTextStyle(color: Banking_TextLightGreenColor)).paddingOnly(right: 8, top: 8, bottom: 8),
+              Text("Balance", style: secondaryTextStyle(size: 18))
+                  .paddingOnly(left: 8, top: 8, bottom: 8),
+              Text(bal,
+                      style: primaryTextStyle(
+                          color: Banking_TextLightGreenColor, size: 18))
+                  .paddingOnly(right: 8, top: 8, bottom: 8),
             ],
           )
         ],
@@ -110,6 +172,7 @@ class EditText extends StatefulWidget {
   var fontFamily;
   var text;
   var maxLine;
+  var isNum;
   TextEditingController? mController;
 
   VoidCallback? onPressed;
@@ -123,6 +186,7 @@ class EditText extends StatefulWidget {
     var this.text = "",
     var this.mController,
     var this.maxLine = 1,
+    var this.isNum = true,
   });
 
   @override
@@ -140,7 +204,11 @@ class EditTextState extends State<EditText> {
           obscureText: widget.isPassword,
           cursorColor: Banking_Primary,
           maxLines: widget.maxLine,
-          style: TextStyle(fontSize: widget.fontSize, color: Banking_TextColorPrimary, fontFamily: widget.fontFamily),
+          inputFormatters: [],
+          style: TextStyle(
+              fontSize: widget.fontSize,
+              color: Banking_TextColorPrimary,
+              fontFamily: widget.fontFamily),
           decoration: InputDecoration(
             hintText: widget.text,
             hintStyle: TextStyle(fontSize: textSizeMedium),
@@ -148,7 +216,30 @@ class EditTextState extends State<EditText> {
               borderSide: BorderSide(color: Banking_Primary, width: 0.5),
             ),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Banking_TextColorSecondary, width: 0.5),
+              borderSide:
+                  BorderSide(color: Banking_TextColorSecondary, width: 0.5),
+            ),
+          ));
+    } else if (widget.isNum) {
+      return TextField(
+          controller: widget.mController,
+          obscureText: widget.isPassword,
+          cursorColor: Banking_Primary,
+          maxLines: widget.maxLine,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          style: TextStyle(
+              fontSize: widget.fontSize,
+              color: Banking_TextColorPrimary,
+              fontFamily: widget.fontFamily),
+          decoration: InputDecoration(
+            hintText: widget.text,
+            hintStyle: TextStyle(fontSize: textSizeMedium),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Banking_Primary, width: 0.5),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide:
+                  BorderSide(color: Banking_TextColorSecondary, width: 0.5),
             ),
           ));
     } else {
@@ -156,7 +247,10 @@ class EditTextState extends State<EditText> {
         controller: widget.mController,
         obscureText: widget.isPassword,
         cursorColor: Banking_Primary,
-        style: TextStyle(fontSize: widget.fontSize, color: Banking_TextColorPrimary, fontFamily: widget.fontFamily),
+        style: TextStyle(
+            fontSize: widget.fontSize,
+            color: Banking_TextColorPrimary,
+            fontFamily: widget.fontFamily),
         decoration: InputDecoration(
             hintText: widget.text,
             hintStyle: TextStyle(fontSize: textSizeMedium),
@@ -172,7 +266,8 @@ class EditTextState extends State<EditText> {
               ),
             ),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Banking_TextColorSecondary, width: 0.5),
+              borderSide:
+                  BorderSide(color: Banking_TextColorSecondary, width: 0.5),
             ),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Banking_Primary, width: 0.5),
@@ -180,6 +275,21 @@ class EditTextState extends State<EditText> {
       );
     }
   }
+}
+
+Widget alertBox(var msg, var title, BuildContext context) {
+  return AlertDialog(
+    title: title,
+    content: msg,
+    actions: <Widget>[
+      TextButton(
+        child: const Text('OK'),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
+    ],
+  );
 }
 
 Widget headerView(var title, double height, BuildContext context) {
@@ -196,20 +306,31 @@ Widget headerView(var title, double height, BuildContext context) {
               color: Banking_blackColor,
             ).paddingAll(6).paddingOnly(top: spacing_standard).onTap(() {
               finish(context);
-            }).paddingOnly(left: spacing_standard, right: spacing_standard_new, top: spacing_standard_new, bottom: spacing_standard),
+            }).paddingOnly(
+                left: spacing_standard,
+                right: spacing_standard_new,
+                top: spacing_standard_new,
+                bottom: spacing_standard),
           ],
         ),
-        Text(title, style: primaryTextStyle(color: Banking_TextColorPrimary, size: 30, fontFamily: fontBold)).paddingOnly(left: spacing_standard_new, right: spacing_standard),
+        Text(title,
+                style: primaryTextStyle(
+                    color: Banking_TextColorPrimary,
+                    size: 30,
+                    fontFamily: fontBold))
+            .paddingOnly(left: spacing_standard_new, right: spacing_standard),
       ],
     ),
   );
 }
 
-Widget commonCacheImageWidget(String? url, double height, {double? width, BoxFit? fit}) {
+Widget commonCacheImageWidget(String? url, double height,
+    {double? width, BoxFit? fit}) {
   if (url.validate().startsWith('http')) {
     if (isMobile) {
       return CachedNetworkImage(
-        placeholder: placeholderWidgetFn() as Widget Function(BuildContext, String)?,
+        placeholder:
+            placeholderWidgetFn() as Widget Function(BuildContext, String)?,
         imageUrl: '$url',
         height: height,
         width: width,
@@ -219,16 +340,20 @@ Widget commonCacheImageWidget(String? url, double height, {double? width, BoxFit
         },
       );
     } else {
-      return Image.network(url!, height: height, width: width, fit: fit ?? BoxFit.cover);
+      return Image.network(url!,
+          height: height, width: width, fit: fit ?? BoxFit.cover);
     }
   } else {
-    return Image.asset(url!, height: height, width: width, fit: fit ?? BoxFit.cover);
+    return Image.asset(url!,
+        height: height, width: width, fit: fit ?? BoxFit.cover);
   }
 }
 
-Widget? Function(BuildContext, String) placeholderWidgetFn() => (_, s) => placeholderWidget();
+Widget? Function(BuildContext, String) placeholderWidgetFn() =>
+    (_, s) => placeholderWidget();
 
-Widget placeholderWidget() => Image.asset('images/LikeButton/image/grey.jpg', fit: BoxFit.cover);
+Widget placeholderWidget() =>
+    Image.asset('images/LikeButton/image/grey.jpg', fit: BoxFit.cover);
 
 BoxConstraints dynamicBoxConstraints({double? maxWidth}) {
   return BoxConstraints(maxWidth: maxWidth ?? applicationMaxWidth);
@@ -239,15 +364,22 @@ double dynamicWidth(BuildContext context) {
 }
 
 Future<void> launchURL(String url, {bool forceWebView = false}) async {
-  await launch(url, enableJavaScript: true, forceWebView: forceWebView).catchError((e) {
+  await launch(url, enableJavaScript: true, forceWebView: forceWebView)
+      .catchError((e) {
     throw '$url is not valid';
   });
 }
 
-BoxDecoration boxDecoration({double radius = 2, Color color = Colors.transparent, Color? bgColor, var showShadow = false}) {
+BoxDecoration boxDecoration(
+    {double radius = 2,
+    Color color = Colors.transparent,
+    Color? bgColor,
+    var showShadow = false}) {
   return BoxDecoration(
     color: bgColor ?? Banking_Secondary,
-    boxShadow: showShadow ? defaultBoxShadow(shadowColor: shadowColorGlobal) : [BoxShadow(color: Colors.transparent)],
+    boxShadow: showShadow
+        ? defaultBoxShadow(shadowColor: shadowColorGlobal)
+        : [BoxShadow(color: Colors.transparent)],
     border: Border.all(color: color),
     borderRadius: BorderRadius.all(Radius.circular(radius)),
   );
